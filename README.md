@@ -74,14 +74,14 @@ docs: 데이터셋 구성 설명 추가
 
 personal_repository
 
-
+```
 ├─ data          # 데이터셋
 ├─ src           # 소스코드
 │  ├─ detection     # Object Detection 모델
 │  ├─ utils         # 헬퍼 함수
 ├─ docs          # 프로젝트 문서 및 보고 자료
 ├─ README.md
-
+```
 
 ## 모델 평가 기준
 
