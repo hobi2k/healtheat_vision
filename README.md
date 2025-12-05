@@ -73,6 +73,8 @@ docs: 데이터셋 구성 설명 추가
 ## 개인 폴더 구조 (초안)
 
 personal_repository
+
+
 ├─ data          # 데이터셋
 ├─ src           # 소스코드
 │  ├─ detection     # Object Detection 모델
