@@ -15,3 +15,4 @@ with zipfile.ZipFile(zip_path, 'r') as zip_ref:
     zip_ref.extractall(extracted_path)
     
 logger.info(f"{zip_path} 파일을 {extracted_path} 경로에 압축 해제 완료.")
+
