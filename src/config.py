@@ -6,10 +6,9 @@ class Config:
     DATA_DIR = BASE_DIR / "data"
     MODELS_DIR = BASE_DIR / "models"
 
-    BATCH_SIZE = 32
-    IMAGE_SIZE = (224, 224)
-    NUM_CLASSES = 10
-    LEARNING_RATE = 0.001
+    BATCH_SIZE = 16
+    IMAGE_SIZE = 640
+    LEARNING_RATE = 1e-3
     EPOCHS = 50
     
     SEED = 42
