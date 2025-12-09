@@ -104,3 +104,36 @@ class CocoParser:
 
         # 최종 병합 결과 반환
         return merged
+    
+    def remap_categories(self, merged):
+        """
+        remap_categories
+        
+        merged: 병합된 dict
+        
+        - 모든 category id를 0 ~ num_classed-1로 재매핑한다.
+        - YOLO는 비연속 ID 허용하지 않음
+        """
+        all_classes = set()
+        for item in merged.values():
+            for cid in item["categories"].keys():
+                all_classes.add(cid)
+                
+        # 매핑 테이블 생성
+        new_ids = {old_id:new_id for new_id, old_id in enumerate(sorted(all_classes))}
+        
+        # 재매핑 적용
+        for item in merged.values():
+            old_cat_data = item["categories"]
+            new_cat_data = {}
+            
+            for old_cid, cname in old_cat_data.items():
+                new_cat_data[new_ids[old_cid]] = cname
+            item["categories"] = new_cat_data
+            
+            # annotation 내부 categoriy id 교체
+            for anno in item["annotations"]:
+                anno["category_id"] = new_ids[anno["category_id"]]
+                
+        return merged
+        

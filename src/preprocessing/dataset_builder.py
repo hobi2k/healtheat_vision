@@ -119,24 +119,24 @@ class YoloDatasetBuilder:
 
         - YOLO는 이 YAML을 기준으로 학습 시 이미지/라벨 경로와 클래스 이름을 로드한다.
         """
+        # 모든 이미지에서 카테고리 뽑아오기
+        all_categories = {}
+        for item in self.data.values():
+            for cid, cname in item["categories"].items():
+                all_categories[cid] = cname
 
-        yaml_text = f"""
-                    path: {self.out_dir}
-                    train: images/train
-                    val: images/val
+        # YAML 텍스트 생성
+        yaml_text = (
+            f"path: {self.out_dir}\n"
+            f"train: images/train\n"
+            f"val: images/val\n\n"
+            f"names:\n"
+        )
 
-                    names:
-                    """
+        # 3) category_id 0~N-1 순서대로 출력
+        for cid in sorted(all_categories.keys()):
+            yaml_text += f"  {cid}: '{all_categories[cid]}'\n"
 
-        # merged_data의 어떤 이미지든 categories는 동일하므로 아무거나 하나 꺼내서 사용
-        any_item = next(iter(self.data.values()))
-        categories = any_item["categories"]
-
-        # YOLO yaml의 names: 아래 부분 채우기
-        for cid, name in categories.items():
-            yaml_text += f"  {cid}: '{name}'\n"
-
-        # 파일 저장
         yaml_path.write_text(yaml_text, encoding="utf-8")
         print("[INFO] dataset.yaml 생성 완료:", yaml_path)
 
@@ -150,14 +150,16 @@ if __name__ == "__main__":
     # YOLO dataset 출력 위치
     out_dir = Config.DATA_DIR / "yolo_dataset"
 
-    # COCO 파서 실행 → 이미지 단위 병합 데이터 생성
+    # COCO 파서 실행 -> 이미지 단위 병합 데이터 생성
     parser = CocoParser(img_dir, ann_root)
     merged = parser.load()
+    merged = parser.remap_categories(merged)
 
     # YOLO dataset builder 실행
     random.seed(Config.SEED)  # train/val split 재현성 확보
     builder = YoloDatasetBuilder(merged, out_dir)
     builder.build()
+    
 
     # dataset.yaml 생성
     builder.write_yaml(out_dir / "dataset.yaml")

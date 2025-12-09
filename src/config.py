@@ -12,6 +12,8 @@ class Config:
     LEARNING_RATE = 0.001
     EPOCHS = 50
     
+    SEED = 42
+    
 def init_logger() -> logging.Logger:
     logging.basicConfig(
         format="%(asctime)s [%(levelname)s] (%(filename)s:%(lineno)d) - %(message)s",
