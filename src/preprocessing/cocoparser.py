@@ -113,27 +113,34 @@ class CocoParser:
         
         - 모든 category id를 0 ~ num_classed-1로 재매핑한다.
         - YOLO는 비연속 ID 허용하지 않음
+        - 캐글 제출을 위해 새로운 id를 원래 id로 재변환할 수 있는 json 파일을 저장
         """
         all_classes = set()
         for item in merged.values():
             for cid in item["categories"].keys():
                 all_classes.add(cid)
-                
-        # 매핑 테이블 생성
-        new_ids = {old_id:new_id for new_id, old_id in enumerate(sorted(all_classes))}
+
+        # old_id -> new_id
+        new_ids = {old_id: new_id for new_id, old_id in enumerate(sorted(all_classes))}
         
         # 재매핑 적용
         for item in merged.values():
             old_cat_data = item["categories"]
             new_cat_data = {}
-            
             for old_cid, cname in old_cat_data.items():
                 new_cat_data[new_ids[old_cid]] = cname
             item["categories"] = new_cat_data
-            
-            # annotation 내부 categoriy id 교체
+
             for anno in item["annotations"]:
                 anno["category_id"] = new_ids[anno["category_id"]]
-                
+
+        # 매핑을 저장
+        self.yolo_to_coco = {v: k for k, v in new_ids.items()}  # {new -> old}
+        
+        # json으로도 저장
+        mapping_path = self.ann_root / "category_mapping.json"
+        with mapping_path.open("w", encoding="utf-8") as f:
+            json.dump(self.yolo_to_coco, f, ensure_ascii=False, indent=2)
+
         return merged
         
