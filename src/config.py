@@ -7,9 +7,9 @@ class Config:
     MODELS_DIR = BASE_DIR / "models"
 
     BATCH_SIZE = 16
-    IMAGE_SIZE = 640
+    IMAGE_SIZE = 640       # yolo11은 960
     LEARNING_RATE = 1e-3
-    EPOCHS = 50
+    EPOCHS = 100
     
     SEED = 42
     

@@ -107,40 +107,49 @@ class CocoParser:
     
     def remap_categories(self, merged):
         """
-        remap_categories
-        
-        merged: 병합된 dict
-        
-        - 모든 category id를 0 ~ num_classed-1로 재매핑한다.
-        - YOLO는 비연속 ID 허용하지 않음
-        - 캐글 제출을 위해 새로운 id를 원래 id로 재변환할 수 있는 json 파일을 저장
+        YOLO 학습을 위해 category_id를 0~N-1 로 재매핑하고,
+        yolo_id -> {coco_id, name} 구조의 mapping.json을 생성한다.
         """
+        # 모든 COCO category id 수집
         all_classes = set()
-        for item in merged.values():
-            for cid in item["categories"].keys():
-                all_classes.add(cid)
+        cid_to_name = {}
 
+        for item in merged.values():
+            for cid, cname in item["categories"].items():
+                all_classes.add(cid)
+                cid_to_name[cid] = cname  # name 정보 저장
+        
         # old_id -> new_id
         new_ids = {old_id: new_id for new_id, old_id in enumerate(sorted(all_classes))}
-        
+
+        # YOLO ID -> {COCO ID, class_name}
+        yolo_mapping = {
+            new_id: {
+                "coco_id": old_id,
+                "name": cid_to_name[old_id]
+            }
+            for old_id, new_id in new_ids.items()
+        }
+
         # 재매핑 적용
         for item in merged.values():
-            old_cat_data = item["categories"]
+            # categories 재생성
             new_cat_data = {}
-            for old_cid, cname in old_cat_data.items():
+            for old_cid, cname in item["categories"].items():
                 new_cat_data[new_ids[old_cid]] = cname
             item["categories"] = new_cat_data
 
+            # annotation category_id 재매핑
             for anno in item["annotations"]:
                 anno["category_id"] = new_ids[anno["category_id"]]
 
-        # 매핑을 저장
-        self.yolo_to_coco = {v: k for k, v in new_ids.items()}  # {new -> old}
-        
-        # json으로도 저장
+        # 최종 매핑 저장
         mapping_path = self.ann_root / "category_mapping.json"
         with mapping_path.open("w", encoding="utf-8") as f:
-            json.dump(self.yolo_to_coco, f, ensure_ascii=False, indent=2)
+            json.dump(yolo_mapping, f, ensure_ascii=False, indent=2)
+
+        print(f"[INFO] Saved category_mapping to: {mapping_path}")
 
         return merged
+
         
