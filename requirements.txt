@@ -1,9 +1,8 @@
-ultralytics
+ultralytics>=8.3.0
 pandas
-notebook
-requests
-opencv-python
 scikit-learn
-tqdm
 pyyaml
-ipykernel
+tqdm
+matplotlib
+opencv-python-headless
+Pillow
