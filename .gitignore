@@ -1,6 +1,7 @@
 # 추가
 baseline_codes/
 data/
+docs/csv
 # macOS
 .DS_Store
 **/.DS_Store
