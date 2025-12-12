@@ -1,0 +1,9 @@
+ultralytics
+pandas
+notebook
+requests
+opencv-python
+scikit-learn
+tqdm
+pyyaml
+ipykernel
