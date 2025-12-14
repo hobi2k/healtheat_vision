@@ -58,6 +58,13 @@ data/*.tar
 data/train_images_temp/
 data/train_annotations_temp/
 data/
+*.zip
+*.tar
+*.tar.gz
+
+# datasets / outputs
+data/
+submissions/
 
 # Training Outputs
 runs/
