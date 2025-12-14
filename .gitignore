@@ -1,3 +1,13 @@
+# runs / artifacts
+artifacts/
+runs/
+**/runs/
+**/artifacts/
+
+# docs
+docs/*.csv
+docs/*.xlsx
+
 # Python
 __pycache__/
 *.py[cod]
@@ -58,7 +68,12 @@ wandb/
 # Submission
 submissions/*.csv
 submissions/*.xlsx
+submissions/
+**/submissions/
 
 # Temp
 temp/
 tmp/
+
+# etc
+.antigravityrules

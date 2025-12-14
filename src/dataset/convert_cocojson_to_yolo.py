@@ -3,7 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import json
 import shutil
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, DefaultDict
+from collections import defaultdict
 
 import pandas as pd
 
@@ -43,15 +44,15 @@ def load_class_map(path: Path) -> Dict[int, int]:
     return {int(r.orig_id): int(r.yolo_id) for r in df.itertuples()}
 
 
-def build_ann_index(ann_root: Path) -> Dict[str, Path]:
+def build_ann_index(ann_root: Path) -> Dict[str, List[Path]]:
     """
-    train_annotations가 깊게 들어가 있으니, stem -> json_path 인덱스를 한번 만든다.
-    (속도/안정성 위해)
+    stem -> [json_path, json_path, ...]
+    같은 stem의 json이 여러 개면 모두 모은다(=박스 여러 개).
     """
-    idx = {}
+    idx: DefaultDict[str, List[Path]] = defaultdict(list)
     for jp in ann_root.rglob("*.json"):
-        idx[jp.stem] = jp
-    return idx
+        idx[jp.stem].append(jp)
+    return dict(idx)
 
 
 def find_image(stem: str) -> Path | None:
@@ -106,7 +107,12 @@ def copy_or_link(src: Path, dst: Path, symlink: bool = False):
         shutil.copy2(src, dst)
 
 
-def convert_split(split_name: str, stems: List[str], ann_index: Dict[str, Path], orig_to_yolo: Dict[int, int]):
+def convert_split(
+    split_name: str,
+    stems: List[str],
+    ann_index: Dict[str, List[Path]],
+    orig_to_yolo: Dict[int, int],
+):
     n_img_ok = 0
     n_ann_ok = 0
     n_missing_img = 0
@@ -119,42 +125,55 @@ def convert_split(split_name: str, stems: List[str], ann_index: Dict[str, Path],
             n_missing_img += 1
             continue
 
-        ann_path = ann_index.get(stem)
-        if ann_path is None:
+        ann_paths = ann_index.get(stem)
+        if not ann_paths:
             n_missing_ann += 1
             continue
 
-        data = json.loads(ann_path.read_text(encoding="utf-8", errors="replace"))
+        all_annotations = []
+        W = H = None
 
-        images = data.get("images", [])
-        if not images:
+        for ann_path in ann_paths:
+            data = json.loads(ann_path.read_text(encoding="utf-8", errors="replace"))
+
+            images = data.get("images", [])
+            if not images:
+                continue
+
+            img_info = images[0]
+            w0 = float(img_info.get("width", 0))
+            h0 = float(img_info.get("height", 0))
+            if w0 <= 0 or h0 <= 0:
+                continue
+
+            # 첫 json에서 W/H 확정, 이후 json은 동일한지 체크(다르면 스킵하거나 경고)
+            if W is None:
+                W, H = w0, h0
+            else:
+                if (W != w0) or (H != h0):
+                    # 데이터 이상 케이스: 같은 stem인데 이미지 정보가 다름
+                    # 여기서는 그냥 스킵(또는 logger/print로 기록)
+                    continue
+
+            all_annotations.extend(data.get("annotations", []))
+
+        if W is None or H is None:
             n_missing_ann += 1
             continue
 
-        img_info = images[0]
-        W = float(img_info.get("width", 0))
-        H = float(img_info.get("height", 0))
-        if W <= 0 or H <= 0:
-            n_missing_ann += 1
-            continue
-
-        # 라벨 생성
         label_lines = []
-        for ann in data.get("annotations", []):
+        for ann in all_annotations:
             orig_id = int(ann.get("category_id"))
             if orig_id not in orig_to_yolo:
-                # class_map에 없는 클래스면 스킵(경고 대신 카운트만)
                 continue
             yolo_id = orig_to_yolo[orig_id]
 
             bbox = ann.get("bbox", None)
-
             if not isinstance(bbox, (list, tuple)) or len(bbox) != 4:
                 n_bad_box += 1
                 continue
 
-            x, y, w, h = bbox
-            x, y, w, h = float(x), float(y), float(w), float(h)
+            x, y, w, h = map(float, bbox)
 
             if CLIP_BBOX:
                 x, y, w, h = clip_xywh(x, y, w, h, W, H)
@@ -164,8 +183,6 @@ def convert_split(split_name: str, stems: List[str], ann_index: Dict[str, Path],
                 continue
 
             cx, cy, nw, nh = xywh_to_yolo(x, y, w, h, W, H)
-
-            # YOLO 포맷: class cx cy w h (normalized)
             label_lines.append(f"{yolo_id} {cx:.6f} {cy:.6f} {nw:.6f} {nh:.6f}")
 
         # 이미지 복사/링크
