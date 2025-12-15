@@ -17,14 +17,14 @@ def main():
     model.train(
         data=str(DATA_YAML),
         imgsz=640,
-        epochs=100,
+        epochs=1,
         batch=8,
         workers=2,
         seed=42,
         exist_ok=False, #이어학습 시 True로
         cache=False,
         project=str(REPO_ROOT / "artifacts" / "runs"),
-        name="yolo11n_main_v1",
+        name="yolo11n_except2_smoke",
         device=device,
     )
 

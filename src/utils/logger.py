@@ -1,7 +1,7 @@
 import logging
 import sys
 
-def setup_logger(name="HealthEatVision"):
+def init_logger(name="HealthEatVision"):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
     
@@ -17,4 +17,4 @@ def setup_logger(name="HealthEatVision"):
     
     return logger
 
-logger = setup_logger()
+logger = init_logger()
