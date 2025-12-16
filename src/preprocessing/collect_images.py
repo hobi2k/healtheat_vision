@@ -15,19 +15,27 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 
+# --- 경로 설정 (Configuration) ---
+# 스크립트 위치를 기준으로 프로젝트 루트(healtheat_vision)를 자동으로 잡습니다.
+# 만약 이 스크립트가 프로젝트의 특정 하위 폴더에 있다면 .parent를 추가하여 조정하세요.
+BASE_DIR = Path(__file__).resolve().parent
+
+# 데이터 저장 기본 경로
+DATA_ROOT = BASE_DIR / "data" / "aihub_downloads"
+
+# 소스 디렉토리 목록 (상대 경로로 관리)
 SRC_DIRS = [
-    # Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images_raw1_3/TS_3_조합"),
-    # Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images_raw1_3/TS_1_조합"),
-    # Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images_raw1_3/VS_1_조합"),
-    Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images_raw4_5/TS_4_조합"),
-    Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images_raw4_5/TS_5_조합"),
+    DATA_ROOT / "images_raw4_5" / "TS_4_조합",
+    DATA_ROOT / "images_raw4_5" / "TS_5_조합",
 ]
 
-DST_DIR = Path("/Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/aihub_downloads/images4_5")
+# 결과물 저장 디렉토리
+DST_DIR = DATA_ROOT / "images4_5"
 
-EXCLUDE_SUFFIX = "_index.png"   # 파일명이 이걸로 끝나면 제외
-DRY_RUN = False                # True로 바꾸면 실제 복사 없이 카운트만 확인
-
+# 기타 설정
+EXCLUDE_SUFFIX = "_index.png"
+DRY_RUN = False 
+# ------------------------------
 
 def iter_pngs(roots: Iterable[Path]) -> Iterable[Path]:
     for root in roots:
