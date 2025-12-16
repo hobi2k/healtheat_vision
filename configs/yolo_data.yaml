@@ -1,4 +1,4 @@
-path: /Users/youuchul/Documents/github/03_projects/01_HealthEat Pill Detection Model/healtheat_vision/data/yolo
+path: data/yolo
 train: images/train
 val: images/val
 nc: 118

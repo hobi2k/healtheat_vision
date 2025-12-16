@@ -17,9 +17,9 @@ def main():
     names = {int(r.yolo_id): str(r.class_name) for r in df.itertuples()}
 
     yolo_cfg = {
-        "path": str(data_dir),         # yolo가 기준으로 삼을 루트
-        "train": "splits/train.txt",
-        "val": "splits/val.txt",
+        "path": "data/yolo",           # 고정된 상대 경로로 변경
+        "train": "images/train",
+        "val": "images/val",
         "nc": int(df["yolo_id"].max() + 1),
         "names": names,
     }
