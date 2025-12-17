@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 
 # Project Root (healtheat_vision)
 PROJECT_ROOT = Path(__file__).resolve().parents[2] # src/xxx/xxxx.py 기준 -> src 폴더에 내부 분류 안으로 .py를 생성하여야 함
