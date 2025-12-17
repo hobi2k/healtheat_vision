@@ -1,44 +1,43 @@
+from pathlib import Path
 import os
 
 # Project Root (healtheat_vision)
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT_ROOT = Path(__file__).resolve().parents[2] # src/xxx/xxxx.py 기준 -> src 폴더에 내부 분류 안으로 .py를 생성하여야 함
 
 # Data Directories
-DATA_DIR = os.path.join(PROJECT_ROOT, "data")
-TRAIN_IMAGES_DIR = os.path.join(DATA_DIR, "train_images")
-TRAIN_ANNOTATIONS_DIR = os.path.join(DATA_DIR, "train_annotations")
-TEST_IMAGES_DIR = os.path.join(DATA_DIR, "test_images")
+DATA_DIR = PROJECT_ROOT / "data"
 
-# YOLO Conversion Output
-YOLO_DIR = os.path.join(DATA_DIR, "yolo")
-YOLO_IMAGES_DIR = os.path.join(YOLO_DIR, "images")
-YOLO_LABELS_DIR = os.path.join(YOLO_DIR, "labels")
+# AIHUB 데이터셋
+AIHUB_DIR = DATA_DIR / "aihub_downloads"
+# 1. 원본 이미지들이 들어있는 곳
+RAW_IMAGES_DIR = AIHUB_DIR / "raw_images"
+# 2. 전처리 후 이미지들을 모을 곳
+COLLECTED_IMAGES_DIR = AIHUB_DIR / "collected_images"
 
-# Splits
-SPLITS_DIR = os.path.join(DATA_DIR, "splits")
-SPLIT_TRAIN = os.path.join(SPLITS_DIR, "train.txt")
-SPLIT_VAL = os.path.join(SPLITS_DIR, "val.txt")
+# 모델 적용 전처리 이전 train/test 데이터 셋
+TRAIN_IMAGES_DIR = DATA_DIR / "train_images"
+TRAIN_ANNOTATIONS_DIR = DATA_DIR / "train_annotations"
+TEST_IMAGES_DIR = DATA_DIR / "test_images"
 
-# Artifacts
-ARTIFACTS_DIR = os.path.join(PROJECT_ROOT, "artifacts")
-CLASS_MAP_PATH = os.path.join(ARTIFACTS_DIR, "class_map.csv")
-MODELS_DIR = os.path.join(ARTIFACTS_DIR, "models")
-VIZ_DIR = os.path.join(ARTIFACTS_DIR, "viz_predictions")
+# YOLO 데이터셋
+YOLO_DIR = DATA_DIR / "yolo"
+YOLO_IMAGES_DIR = YOLO_DIR / "images"
+YOLO_LABELS_DIR = YOLO_DIR / "labels"
 
-# Configs
-CONFIGS_DIR = os.path.join(PROJECT_ROOT, "configs")
-YOLO_DATA_YAML = os.path.join(CONFIGS_DIR, "yolo_data.yaml")
+# 모델 구동 (각 모델별 결과는 /run, 결과물 코드 맵핑 class_map.csv)
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 
-# Scripts
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "scripts")
+# yaml 설정 파일
+CONFIGS_DIR = PROJECT_ROOT / "configs"
 
-# Submissions
-SUBMISSIONS_DIR = os.path.join(PROJECT_ROOT, "submissions")
+# 제출 파일 저장
+SUBMISSIONS_DIR = PROJECT_ROOT / "submissions"
 
 def ensure_dirs():
-    """Ensure all critical directories exist."""
-    os.makedirs(ARTIFACTS_DIR, exist_ok=True)
-    os.makedirs(MODELS_DIR, exist_ok=True)
-    os.makedirs(VIZ_DIR, exist_ok=True)
-    os.makedirs(SPLITS_DIR, exist_ok=True)
-    os.makedirs(SUBMISSIONS_DIR, exist_ok=True)
+    """프로젝트 실행에 필요한 필수 폴더 생성"""
+    for d in [DATA_DIR, COLLECTED_IMAGES_DIR, ARTIFACTS_DIR]:
+        d.mkdir(parents=True, exist_ok=True)
+
+if __name__ == "__main__":
+    print(f"Project Root: {PROJECT_ROOT}")
+    print(f"Raw Images Path: {RAW_IMAGES_DIR}")        

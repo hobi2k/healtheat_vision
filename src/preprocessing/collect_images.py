@@ -1,117 +1,73 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-collect_images.py
-- 지정한 여러 root 폴더 아래에 흩어진 PNG들을 한 폴더로 복사(모으기)
-- *_index.png 는 제외
-- 파일명 충돌 시 _dupXXXX suffix로 회피
-"""
-
-from __future__ import annotations
-
 import shutil
+import sys
+import hashlib
 from pathlib import Path
-from typing import Iterable, Tuple
 
+# 프로젝트 루트를 path에 추가하여 src 패키지를 인식하게 함
+FILE_PATH = Path(__file__).resolve()
+ROOT = FILE_PATH.parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-# --- 경로 설정 (Configuration) ---
-# 스크립트 위치를 기준으로 프로젝트 루트(healtheat_vision)를 자동으로 잡습니다.
-# 만약 이 스크립트가 프로젝트의 특정 하위 폴더에 있다면 .parent를 추가하여 조정하세요.
-BASE_DIR = Path(__file__).resolve().parent
+from src.utils import logger, RAW_IMAGES_DIR, COLLECTED_IMAGES_DIR
 
-# 데이터 저장 기본 경로
-DATA_ROOT = BASE_DIR / "data" / "aihub_downloads"
+class ImageCollector:
+    def __init__(self, dry_run: bool = False):
+        self.dry_run = dry_run
+        self.logger = logger
+        self.src_root = RAW_IMAGES_DIR
+        self.dst_dir = COLLECTED_IMAGES_DIR
+        self.exclude_suffix = "_index.png"
+        self.existing_hashes = {} # 중복 방지용 해시 장부
 
-# 소스 디렉토리 목록 (상대 경로로 관리)
-SRC_DIRS = [
-    DATA_ROOT / "images_raw4_5" / "TS_4_조합",
-    DATA_ROOT / "images_raw4_5" / "TS_5_조합",
-]
+    def get_file_hash(self, path: Path) -> str:
+        hasher = hashlib.md5()
+        with open(path, 'rb') as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                hasher.update(chunk)
+        return hasher.hexdigest()
 
-# 결과물 저장 디렉토리
-DST_DIR = DATA_ROOT / "images4_5"
+    def run(self):
+        if not self.src_root.exists():
+            self.logger.error(f"원본 폴더가 없습니다: {self.src_root}")
+            return
 
-# 기타 설정
-EXCLUDE_SUFFIX = "_index.png"
-DRY_RUN = False 
-# ------------------------------
+        self.dst_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 탐색 대상 폴더
+        sub_dirs = [p for p in self.src_root.iterdir() if p.is_dir() and (p.name.startswith("TS_") or p.name.startswith("VS_"))]
+        
+        self.logger.info(f"수집 시작...")
 
-def iter_pngs(roots: Iterable[Path]) -> Iterable[Path]:
-    for root in roots:
-        if not root.exists():
-            print(f"[WARN] not found: {root}")
-            continue
-        for p in root.rglob("*.png"):
-            if p.name.endswith(EXCLUDE_SUFFIX):
-                continue
-            yield p
+        moved, skipped = 0, 0
 
+        for s_dir in sub_dirs:
+            self.logger.info(f"스캔 중: {s_dir.name}")
+            for img_path in s_dir.rglob("*.png"):
+                if img_path.name.endswith(self.exclude_suffix):
+                    continue
 
-def unique_dst_path(dst_dir: Path, filename: str) -> Path:
-    """
-    dst_dir/filename 이 이미 존재하면 filename에 _dupXXXX 붙여서 유니크하게 만든다.
-    """
-    candidate = dst_dir / filename
-    if not candidate.exists():
-        return candidate
+                # 핵심 수정: 목적지에 같은 이름의 파일이 이미 있다면? 
+                # 내용 비교(해시)도 하지 말고 그냥 스킵합니다. (이름 보존 + 용량 아끼기)
+                target_path = self.dst_dir / img_path.name
+                if target_path.exists():
+                    skipped += 1
+                    continue
 
-    stem = candidate.stem
-    suffix = candidate.suffix
-    i = 1
-    while True:
-        new_name = f"{stem}_dup{i:04d}{suffix}"
-        candidate = dst_dir / new_name
-        if not candidate.exists():
-            return candidate
-        i += 1
+                if not self.dry_run:
+                    # 복사가 아닌 이동(용량 부족 해결)
+                    shutil.move(str(img_path), str(target_path))
+                
+                moved += 1
+                if moved % 2000 == 0:
+                    self.logger.info(f"진행 상황: {moved}장 완료...")
 
-
-def copy_images(src_paths: Iterable[Path], dst_dir: Path) -> Tuple[int, int]:
-    """
-    return: (copied_count, skipped_count)
-    """
-    dst_dir.mkdir(parents=True, exist_ok=True)
-
-    copied = 0
-    skipped = 0
-
-    for src in src_paths:
-        if not src.is_file():
-            skipped += 1
-            continue
-
-        dst = unique_dst_path(dst_dir, src.name)
-
-        # 동일 파일(경로 다름)인데 파일명 충돌 나는 케이스를 대비해 항상 dst를 유니크하게 만듦
-        if DRY_RUN:
-            copied += 1
-            continue
-
-        shutil.copy2(src, dst)  # 메타데이터 포함 복사
-        copied += 1
-
-        if copied % 2000 == 0:
-            print(f"[INFO] copied: {copied}")
-
-    return copied, skipped
-
-
-def main():
-    print("[INFO] Source roots:")
-    for d in SRC_DIRS:
-        print(f"  - {d}")
-
-    print(f"[INFO] Destination: {DST_DIR}")
-    print(f"[INFO] Exclude: *{EXCLUDE_SUFFIX}")
-    print(f"[INFO] DRY_RUN: {DRY_RUN}")
-
-    src_paths = list(iter_pngs(SRC_DIRS))
-    print(f"[INFO] found pngs (excluded applied): {len(src_paths)}")
-
-    copied, skipped = copy_images(src_paths, DST_DIR)
-    print(f"[DONE] copied={copied}, skipped={skipped}, dst={DST_DIR}")
-
+        self.logger.info(f"최종 완료! 새 파일: {moved}, 이름 중복 제외: {skipped}")
 
 if __name__ == "__main__":
-    main()
+    # 안전하게 테스트해보고 싶다면 dry_run=True로 먼저 실행하세요.
+    collector = ImageCollector(dry_run=False)
+    collector.run()
