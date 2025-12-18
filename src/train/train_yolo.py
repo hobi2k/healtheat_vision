@@ -5,7 +5,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_YAML = REPO_ROOT / "configs" / "yolo_data.yaml"
 
 import matplotlib.pyplot as plt
-# from src.utils import get_device # 윈도우 옵션
+# from src.utils import get_device # 윈도우 학습시 미사용, yolo 파라미터로 잡음
 import platform
 
 # healtheat_vision(=REPO_ROOT) 폴더에서 실행 코드 "python -m src.train.train_yolo"
