@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 TEST_IMG_DIR = REPO_ROOT / "data" / "test_images"
 
 # ✅ 학습 run 폴더명 (artifacts/runs 아래)
-RUN_NAME = "yolo11n_main_v2"
+RUN_NAME = "yolov8n_comparison_v1_SGD"
 RUN_DIR = REPO_ROOT / "artifacts" / "runs" / RUN_NAME
 
 # ✅ 보통 제출은 best.pt 권장 (last.pt는 마지막 상태라 불안정할 수 있음)
