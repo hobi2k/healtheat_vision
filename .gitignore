@@ -7,6 +7,7 @@ runs/
 # docs
 docs/*.csv
 docs/*.xlsx
+전달파일/
 
 # Python
 __pycache__/

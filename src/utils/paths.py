@@ -1,5 +1,9 @@
 from pathlib import Path
-
+'''
+    프로젝트 전체에서 공통으로 사용하는 경로 정의 및 관리 모듈입니다.
+    pathlib 기반 Path 객체를 사용하여 파일 시스템 경로를 다룹니다.
+    def ensure_dirs() : 프로젝트 실행에 필요한 필수 폴더 생성
+'''
 # Project Root (healtheat_vision)
 PROJECT_ROOT = Path(__file__).resolve().parents[2] # src/xxx/xxxx.py 기준 -> src 폴더에 내부 분류 안으로 .py를 생성하여야 함
 
@@ -32,11 +36,20 @@ CONFIGS_DIR = PROJECT_ROOT / "configs"
 # 제출 파일 저장
 SUBMISSIONS_DIR = PROJECT_ROOT / "submissions"
 
-def ensure_dirs():
+def ensure_dirs() -> None:
     """프로젝트 실행에 필요한 필수 폴더 생성"""
     for d in [DATA_DIR, COLLECTED_IMAGES_DIR, ARTIFACTS_DIR]:
         d.mkdir(parents=True, exist_ok=True)
 
 if __name__ == "__main__":
     print(f"Project Root: {PROJECT_ROOT}")
-    print(f"Raw Images Path: {RAW_IMAGES_DIR}")        
+    print(f"Raw Images: {RAW_IMAGES_DIR}")
+    print(f"Collected Images: {COLLECTED_IMAGES_DIR}")
+    print(f"Train Images: {TRAIN_IMAGES_DIR}")
+    print(f"Train Annotations: {TRAIN_ANNOTATIONS_DIR}")
+    print(f"Test Images: {TEST_IMAGES_DIR}")
+    print(f"YOLO Images: {YOLO_IMAGES_DIR}")
+    print(f"YOLO Labels: {YOLO_LABELS_DIR}")
+    print(f"Artifacts: {ARTIFACTS_DIR}")
+    print(f"Configs: {CONFIGS_DIR}")
+    print(f"Submissions: {SUBMISSIONS_DIR}")
