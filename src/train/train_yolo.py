@@ -1,49 +1,85 @@
+"""
+YOLO 모델 학습 메인 스크립트
+
+실행 방법:
+    터미널에서 프로젝트 루트(healtheat_vision) 폴더로 이동 후 아래 명령어 실행
+    python -m src.train.train_yolo --cfg [설정파일명.yaml]
+
+예시:
+    python -m src.train.train_yolo --cfg hparams_v11.yaml
+    python -m src.train.train_yolo --cfg hparams_v8.yaml
+"""
+
+import yaml
+import argparse
 from ultralytics import YOLO
-from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-DATA_YAML = REPO_ROOT / "configs" / "yolo_data.yaml"
-
-import matplotlib.pyplot as plt
-# from src.utils import get_device # 윈도우 학습시 미사용, yolo 파라미터로 잡음
-import platform
-
-# healtheat_vision(=REPO_ROOT) 폴더에서 실행 코드 "python -m src.train.train_yolo"
-def set_korean_font():
-    os_name = platform.system()
-
-    # Windows: 맑은 고딕
-    if os_name == "Windows":
-        plt.rcParams["font.family"] = "Malgun Gothic"
-
-    # macOS: 애플고딕(혹은 Apple SD Gothic Neo)
-    elif os_name == "Darwin":
-        plt.rcParams["font.family"] = "AppleGothic"
-
-    # Linux: 나눔고딕(설치돼 있어야 함)
-    else:
-        plt.rcParams["font.family"] = "NanumGothic"
-
-    plt.rcParams["axes.unicode_minus"] = False
-
-set_korean_font()
+# utils에서 logger와 나머지 도구들을 가져옵니다.
+from src.utils import (
+    YOLO_DATA_YAML, CONFIGS_DIR, RUNS_DIR, MODELS_DIR,
+    get_device, set_korean_font, ensure_dirs,
+    logger  # 로거 추가
+)
 
 def main():
-    # device = get_device() # 윈도우 옵션으로 ULTRALYRICS_DEVICE 환경 변수에 따라 결정
-    model = YOLO("yolo11n.pt")  # nano로 시작
-    model.train(
-        data=str(DATA_YAML),
-        imgsz=640,
-        epochs=100,
-        batch=16, #GPU 메모리에 따라 조정
-        workers=4, #CPU 코어 수에 따라 조정
+    # 0. 환경 체크
+    ensure_dirs()
+    set_korean_font()
+    
+    # 1. 인자 설정
+    parser = argparse.ArgumentParser(description="HealthEat Vision YOLO Training")
+    parser.add_argument("--cfg", type=str, required=True, help="configs/ 폴더 내 YAML 파일명")
+    args = parser.parse_args()
+
+    config_path = CONFIGS_DIR / args.cfg
+    if not config_path.exists():
+        logger.error(f"설정 파일을 찾을 수 없습니다: {config_path}") # print 대신 error 로그
+        return
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        hp = yaml.safe_load(f)
+
+    # 2. 장치 탐지 및 로그 기록
+    device = get_device()
+    logger.info(f"사용 가능 장치 탐지 완료: {device}")
+
+    # 3. 필수 인자 검증
+    try:
+        model_path = hp['model']
+        epochs = hp['epochs']
+        name = hp['name']
+    except KeyError as e:
+        logger.error(f"필수 항목 누락됨 ({args.cfg}): {e}")
+        return
+
+    # 4. 학습 시작 정보 로그 기록
+    logger.info(f"--- 학습 시작: {name} ---")
+    logger.info(f"Model: {model_path} | Epochs: {epochs} | Device: {device}")
+
+    # 5. 모델 로드 및 학습
+    model = YOLO(model_path)
+    
+    # results는 학습 후 결과 객체입니다.
+    results = model.train(
+        data=str(YOLO_DATA_YAML),
+        imgsz=hp.get('imgsz', 640),
+        epochs=epochs,
+        batch=hp.get('batch', 16),
+        optimizer=hp.get('optimizer', 'auto'),
+        project=str(RUNS_DIR),
+        name=name,
+        device=device,
+        cache="disk",
         seed=42,
-        exist_ok=False, #이어학습 시 True로
-        cache="disk", #TRUE 옵션은 Caching images (3.1GB RAM), shared file mapping 1455 + Unable to allocate 2.86 MiB 로그 확인 후 RAM압박으로 인한 에러 발생
-        project=str(REPO_ROOT / "artifacts" / "runs"),
-        name="yolo11n_main_v2",
-        device="cuda:0",
+        workers=hp.get('workers', 4),
+        patience=hp.get('patience', 50),
+        val=True,
+        cos_lr=hp.get('cos_lr', True),
+        exist_ok=False,
     )
+    
+    logger.info(f"--- 학습 완료: {name} ---")
+    logger.info(f"결과 저장 경로: {RUNS_DIR / name}")
 
 if __name__ == "__main__":
     main()

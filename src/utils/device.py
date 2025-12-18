@@ -2,27 +2,12 @@ import torch
 
 def get_device():
     """
-    사용 가능한 연산 장치를 자동으로 탐지하여 반환하는 함수.
-
-    동작 우선순위:
-    1. CUDA GPU가 존재하면 'cuda' 장치를 반환
-    2. (Mac 전용) Apple Silicon MPS 가속기가 가능하면 'mps' 장치를 반환
-    3. 위 두 옵션이 모두 없을 경우 CPU 장치를 반환
-
-    Returns:
-        torch.device: 선택된 연산 장치 (cuda / mps / cpu)
+    사용 가능한 장치를 탐지하여 Ultralytics YOLO에 적합한 문자열로 반환합니다.
     """
-    # 1) CUDA (Colab or PC)
-    # (코랩 설정 필요: 메뉴 - 런타임 - 런타임 유형 변경 - 하드웨어 가속기)
     if torch.cuda.is_available():
-        print("CUDA GPU detected.")
-        return torch.device("cuda")
-
-    # 2) Apple Silicon (Local Mac)
+        return "0"  # CUDA:0 (여러 개일 경우를 대비해 인덱스 번호 문자열 추천)
+    
     if torch.backends.mps.is_available():
-        print("Apple MPS GPU detected.")
-        return torch.device("mps")
-
-    # 3) CPU fallback
-    print("No GPU detected. Using CPU.")
-    return torch.device("cpu")
+        return "mps"
+    
+    return "cpu"

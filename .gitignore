@@ -1,8 +1,17 @@
-# runs / artifacts
-artifacts/
+# === Project Artifacts ===
+# artifacts 폴더 전체를 일단 무시
+artifacts/**/*
+
+# 하지만 .gitkeep 파일은 추적하여 폴더 구조를 유지
+!artifacts/**/.gitkeep
+
+# === Training Outputs & Weights ===
+# 모든 가중치 파일 제외 (어느 폴더에 있든)
+*.pt
+*.pth
+# YOLO가 기본으로 생성할 수도 있는 runs 폴더 제외
 runs/
-**/runs/
-**/artifacts/
+wandb/
 
 # docs
 docs/*.csv
