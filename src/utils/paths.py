@@ -10,13 +10,19 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # Data Directories
 DATA_DIR = PROJECT_ROOT / "data"
-AIHUB_DIR = DATA_DIR / "aihub_downloads"
-RAW_IMAGES_DIR = AIHUB_DIR / "raw_images"
-COLLECTED_IMAGES_DIR = AIHUB_DIR / "collected_images"
+TRAIN_ANNOTATIONS_DIR = DATA_DIR / "train_annotations"
+TRAIN_IMAGES_DIR = DATA_DIR / "train_images"
 
 # YOLO 데이터셋 (yolo_data.yaml에서 참조할 경로)
 YOLO_DIR = DATA_DIR / "yolo"
 YOLO_DATA_YAML = PROJECT_ROOT / "configs" / "yolo_data.yaml"
+# "yolo_data.yaml" 내에 path: data/yolo, train: images/train, val: images/val 로 설정되어 있어야 합니다.
+    # 학습/검증 데이터셋 Yolo 분할 (참고):  DATA_DIR / "splits" 폴더에 train.txt, val.txt 파일이 있습니다.
+
+# AIHub 데이터셋
+AIHUB_DIR = DATA_DIR / "aihub_downloads"
+RAW_IMAGES_DIR = AIHUB_DIR / "raw_images"
+COLLECTED_IMAGES_DIR = AIHUB_DIR / "collected_images"
 
 # 모델 설정 관련 (추가)
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
