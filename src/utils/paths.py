@@ -20,9 +20,15 @@ YOLO_DATA_YAML = PROJECT_ROOT / "configs" / "yolo_data.yaml"
     # 학습/검증 데이터셋 Yolo 분할 (참고):  DATA_DIR / "splits" 폴더에 train.txt, val.txt 파일이 있습니다.
 
 # AIHub 데이터셋
-AIHUB_DIR = DATA_DIR / "aihub_downloads"
-RAW_IMAGES_DIR = AIHUB_DIR / "raw_images"
-COLLECTED_IMAGES_DIR = AIHUB_DIR / "collected_images"
+AIHUB_DIR = DATA_DIR / "aihub_downloads" # AIHub 데이터셋이 다운로드된 폴더
+RAW_IMAGES_DIR = AIHUB_DIR / "raw_images" # AIHub 원본 이미지 폴더
+COLLECTED_IMAGES_DIR = AIHUB_DIR / "collected_images" # AIHub 수집 이미지 폴더
+RAW_ANNOTATIONS_DIR = AIHUB_DIR / "raw_annotations" # AIHub 원본 라벨 폴더
+EDITED_ANNOTATIONS_DIR = AIHUB_DIR / "annotations_json_edited" # AIHub 수정된 라벨 폴더
+
+# [추가] 에러 클래스 대응용 추가 데이터 폴더
+ADDITIONAL_TRAIN_ANN_DIR = DATA_DIR / "additional_train_annotations"
+ADDITIONAL_TRAIN_IMG_DIR = DATA_DIR / "additional_train_images"
 
 # 모델 설정 관련 (추가)
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
@@ -36,6 +42,15 @@ RUNS_DIR = ARTIFACTS_DIR / "runs" # 학습 결과(weights, charts)가 저장될 
 # 제출 파일 저장
 SUBMISSIONS_DIR = PROJECT_ROOT / "submissions"
 
+# 추가 학습 관련
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
+CLASS_MAP_PATH = ARTIFACTS_DIR / "class_map.csv"
+
+# 에러 클래스 관련
+ERROR_CLASS_LIST_PATH = ARTIFACTS_DIR / "error_class_list.csv"
+ADDITIONAL_TRAIN_ANN_DIR = DATA_DIR / "additional_train_annotations"
+ADDITIONAL_TRAIN_IMG_DIR = DATA_DIR / "additional_train_images"
+
 def ensure_dirs() -> None:
     """프로젝트 실행에 필요한 필수 폴더 생성"""
     # 실험 기록을 위한 runs 폴더와 설정 폴더 등을 목록에 추가
@@ -46,7 +61,9 @@ def ensure_dirs() -> None:
         ARTIFACTS_DIR, 
         RUNS_DIR, 
         CONFIGS_DIR,
-        SUBMISSIONS_DIR
+        SUBMISSIONS_DIR,
+        ADDITIONAL_TRAIN_ANN_DIR,
+        ADDITIONAL_TRAIN_IMG_DIR,
     ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
