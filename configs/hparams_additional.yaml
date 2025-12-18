@@ -1,0 +1,10 @@
+# configs/hparams_additional.yaml
+model: "artifacts/runs/yolo11n_main_v2/weights/best.pt" # 기존 학습한 best 가중치 경로
+data_yaml: "additional_data.yaml"          # 이번에 새로 만든 추가 데이터용 YAML
+name: "finetune_error_classes_main_v2"
+epochs: 30                                 # 추가 학습은 짧고 굵게
+imgsz: 640
+batch: 16
+lr0: 0.001                                 # 파인튜닝이므로 기본값(0.01)보다 낮게 설정
+optimizer: "AdamW"                         # 미세 조정 시 안정적인 옵티마이저
+patience: 10

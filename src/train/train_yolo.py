@@ -56,12 +56,23 @@ def main():
     logger.info(f"--- 학습 시작: {name} ---")
     logger.info(f"Model: {model_path} | Epochs: {epochs} | Device: {device}")
 
-    # 5. 모델 로드 및 학습
+    # 5. 모델 로드
     model = YOLO(model_path)
     
-    # results는 학습 후 결과 객체입니다.
+    # 하이퍼파라미터 YAML에 정의된 데이터 설정 파일명을 가져옵니다.
+    # 예: hparams_additional.yaml에 'data_yaml: additional_data.yaml' 이라고 써있으면 그걸 사용
+    data_cfg_name = hp.get('data_yaml', 'yolo_data.yaml') 
+    
+    # 실제 경로: CONFIGS_DIR (configs/) + 파일명
+    actual_data_path = CONFIGS_DIR / data_cfg_name
+    
+    if not actual_data_path.exists():
+        logger.error(f"데이터 설정 파일을 찾을 수 없습니다: {actual_data_path}")
+        return
+
+    # 6. 학습 실행
     results = model.train(
-        data=str(YOLO_DATA_YAML),
+        data=str(actual_data_path),
         imgsz=hp.get('imgsz', 640),
         epochs=epochs,
         batch=hp.get('batch', 16),
