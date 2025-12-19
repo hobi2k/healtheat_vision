@@ -96,8 +96,36 @@ healtheat_vision/
 └── README.md                # 프로젝트 가이드
 ```
 
-## 모델 평가 기준
+## src 내부
+├── dataset ✅
+│   ├── build_class_map.py : 원본 JSON들을 훑어서 클래스 리스트(class_map.csv) 생성.
+│   ├── convert_cocojson_to_yolo.py : COCO JSON 포맷을 YOLO 포맷으로 변환.
+│   ├── split_check_class.py : YOLO 데이터셋의 클래스 분포를 확인하고 누락된 클래스를 찾음.
+│   ├── split_dataset.py : 학습/평가 데이터셋으로 분할.
+│   ├── update_yolo_data_yaml.py : YOLO 학습용 설정 파일(yolo_data.yaml)을 생성 또는 업데이트.
+│   └── collect_and_split_additional_data.py : 에러 데이터셋을 수집하고 학습/평가 데이터셋으로 분할.
+│
+├── pred
+│   └── predict_and_submit.py
+├── preprocessing
+│   ├── collect_images.py
+│   ├── edit_json.py
+│   └── label_check_class.py
+├── train
+│   ├── resume_yolo.py
+│   ├── train_yolo_legacy.py
+│   └── train_yolo.py
+├── utils
+│   ├── device.py
+│   ├── logger.py
+│   ├── paths.py
+│   └── viz.py
+└── visualization
+    ├── check_aug_data.py
+    ├── check_yolo_plottly.py
+    └── check_yolo.py
 
+## 모델 평가 기준
 
 | 항목        | 지표                              |
 | --------- | ------------------------------- |
