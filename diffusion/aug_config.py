@@ -8,6 +8,7 @@
 """
 from dataclasses import dataclass
 from pathlib import Path
+from src.dataset import convert_cocojson_to_yolo
 from src.utils import paths
 import random
 
@@ -15,13 +16,11 @@ import random
 @dataclass
 class AugConfig:
     # 경로 설정
-    image_dir: Path = paths.DATA_DIR / "train_images"
-    coco_json: Path = paths.DATA_DIR / "train_annotations"
+    image_dir: Path = convert_cocojson_to_yolo.YOLO_IMAGES_DIR / "train"
+    label_dir: Path = convert_cocojson_to_yolo.YOLO_LABELS_DIR / "train"
 
     out_image_dir: Path = paths.DATA_DIR / "aug/aug_images"
-    
-    save_per_image_coco: bool = True
-    out_coco_per_image_dir: Path = paths.DATA_DIR / "aug/aug_annotations"
+    out_label_dir: Path = paths.DATA_DIR / "aug/aug_labels"
 
     # SAM 설정
     sam_checkpoint: Path = paths.MODELS_DIR / "sam/sam_vit_h_4b8939.pth"
