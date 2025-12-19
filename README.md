@@ -70,9 +70,8 @@ feat: YOLOv8 데이터 로더 구현
 fix: OCR 전처리 크롭 좌표 오류 수정
 docs: 데이터셋 구성 설명 추가
 
-## 개인 폴더 구조 (youuuchul)
+## 폴더 구조
 
-personal_repository
 
 ```
 healtheat_vision/
@@ -84,6 +83,7 @@ healtheat_vision/
 │   ├── train_annotations/   # 전처리/수정된 JSON 어노테이션
 │   ├── yolo/                # YOLO 포맷으로 변환된 최종 데이터 (images/labels)
 │   └── test_images/         # 평가용 테스트 이미지
+├── diffusion/               # 데이터 증강용 디퓨전+SAM 스크립트
 ├── docs/                    # 데이터 분석(EDA) 및 매칭 리스트 (Jupyter Notebooks)
 ├── scripts/                 # 환경 설정 및 데이터 다운로드 셸 스크립트
 ├── src/                     # 핵심 소스 코드
@@ -104,6 +104,10 @@ healtheat_vision/
 | Detection | mAP, Recall, Precision          |
 | 의료 안전성    | 오검출률 최소화                        |
 
+
+## 스테이블 디퓨전 이미지 증강
+
+여기로 -> [README.md](/diffusion/README.md)
 
 ## 커뮤니케이션 규칙
 
