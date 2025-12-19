@@ -1,0 +1,10 @@
+# YOLOv8 Comparison Settings
+model: yolov8n.pt
+imgsz: 640
+epochs: 1
+batch: 16
+optimizer: 'SGD'  # v11(AdamW 추천)과 대비되는 실험군
+cos_lr: true
+mosaic: 1.0
+name: 'yolov8n_comparison_v1_smoke_e01'
+workers: 4
