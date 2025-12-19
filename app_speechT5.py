@@ -1,4 +1,5 @@
 import torch
+import pandas as pd
 import numpy as np
 import importlib.util, sys
 import unicodedata
@@ -17,7 +18,11 @@ import gradio as gr
 from src.utils import paths
 
 # YOLO 모델 로드 (모델 필요함)
-yolo = YOLO(paths.ARTIFACTS_DIR / "need models")
+yolo = YOLO(paths.ARTIFACTS_DIR / "best.pt")
+
+# class_map.csv 파일을 읽어옵니다. 
+df_class = pd.read_csv(paths.ARTIFACTS_DIR / "class_map.csv")
+# -------------------------
 
 QWEN_ID = "Qwen/Qwen2.5-3B-Instruct"  # 적절한 한국어 실력의 LM 사용
 
@@ -44,6 +49,46 @@ def qwen_generate(prompt: str) -> str:
 
     text = qwen_tokenizer.decode(output[0], skip_special_tokens=True)
     return text.split(prompt)[-1].strip()
+
+def remove_ack_sentences(text: str) -> str:
+    """
+    LLM이 습관적으로 출력하는 응답형 문장 제거
+    (네, 이해했습니다 / 알겠습니다 등)
+    """
+    blacklist = [
+        "네",
+        "네.",
+        "네,",
+        "이해했습니다",
+        "알겠습니다",
+        "확인했습니다",
+        "네 이해했습니다",
+        "네, 이해했습니다",
+        "네 알겠습니다",
+    ]
+
+    # 문장 단위로 분리
+    sentences = (
+        text.replace("\n", " ")
+            .replace("!", ".")
+            .replace("?", ".")
+            .split(".")
+    )
+
+    filtered = []
+    for s in sentences:
+        s = s.strip()
+        if not s:
+            continue
+        # 블랙리스트 포함 문장 제거
+        if any(b in s for b in blacklist):
+            continue
+        filtered.append(s)
+
+    if not filtered:
+        return ""
+
+    return ". ".join(filtered) + "."
 
 def clean_label(obj: str) -> str:
     """
@@ -83,19 +128,29 @@ def box_to_position(x1, y1, x2, y2, img_w, img_h) -> str:
 
 def extract_objects_with_position(results, image):
     """
-    YOLO 결과 -> 라벨 + 위치 정보 추출
+    YOLO 결과 -> 라벨 + 위치 정보 + 임산부 주의 정보 추출
     """
     h, w = image.shape[:2]
     objects = []
 
     for b in results.boxes:
-        cls_name = results.names[int(b.cls)]
+        # 1. 변수 정의: cls_id를 먼저 정의해야 합니다!
+        cls_id = int(b.cls) 
+        cls_name = results.names[cls_id]
+        
         x1, y1, x2, y2 = b.xyxy[0].tolist()
         pos = box_to_position(x1, y1, x2, y2, w, h)
+
+        # 2. CSV에서 정보 매칭
+        row = df_class[df_class['yolo_id'] == cls_id]
+        is_pregnant_warning = False
+        if not row.empty:
+            is_pregnant_warning = bool(row.iloc[0]['is_pregnant'])
 
         objects.append({
             "label": clean_label(cls_name),
             "position": pos,
+            "is_pregnant": is_pregnant_warning,
         })
 
     return objects
@@ -105,10 +160,13 @@ def yolo_to_prompt_with_position(objects: list[dict]) -> str:
     """
     위치 정보를 포함한 Qwen 프롬프트 생성
     """
-    lines = [
-        f"- {obj['label']} ({obj['position']})"
-        for obj in objects
-    ]
+    lines = [] # 빈 리스트를 먼저 만들고
+    for obj in objects: # 하나씩 꺼내서
+        # 1. 임산부 약인지 검사해서 글자를 정함
+        warning_tag = "[임산부 주의 약물]" if obj.get('is_pregnant') else ""
+    
+        # 2. 이름 + 위치 + 아까 정한 글자를 합쳐서 리스트에 넣음
+        lines.append(f"- {obj['label']} ({obj['position']}) {warning_tag}")
 
     return f"""
 너는 시각 장애인을 위한 음성 안내 AI다.
@@ -122,7 +180,9 @@ def yolo_to_prompt_with_position(objects: list[dict]) -> str:
 - 위치는 '왼쪽/가운데/오른쪽', '위/중앙/아래' 표현만 사용할 것
 - 의학적 판단이나 추측은 하지 말 것
 - 보이는 사실만 말할 것
+- 목록에 '[임산부 주의 약물]' 표시가 있는 약은 반드시 "이 약은 임산부에게 위험할 수 있으니 주의하세요"라는 내용을 문장에 포함할 것
 - 마지막에 전체 객체 개수를 말할 것
+- "네", "알겠습니다", "이해했습니다" 같은 응답형 문장은 절대 포함하지 말 것
 
 자연스럽고 간결한 한국어 문장으로 설명하라.
 """.strip()
@@ -224,12 +284,12 @@ def tts(text: str):
     full = np.concatenate(audio_chunks, axis=0)
     return (SR, full)
  
-def clean_label(obj: str) -> str:
-    # 띄어쓰기 기준 첫 토큰만
-    first = obj.split()[0]
-    # 숫자/영문/특수문자 제거 (한글만 유지)
-    only_korean = "".join(ch for ch in first if '가' <= ch <= '힣')
-    return only_korean   
+# def clean_label(obj: str) -> str:
+#     # 띄어쓰기 기준 첫 토큰만
+#     first = obj.split()[0]
+#     # 숫자/영문/특수문자 제거 (한글만 유지)
+#     only_korean = "".join(ch for ch in first if '가' <= ch <= '힣')
+#     return only_korean   
 
 # YOLO -> 텍스트 -> 음성 전체 파이프라인
 def pipeline(image):
@@ -251,7 +311,8 @@ def pipeline(image):
         final_text = "이미지에서 탐지된 알약이 없습니다."
     else:
         prompt = yolo_to_prompt_with_position(objects)
-        final_text = qwen_generate(prompt)
+        raw_text = qwen_generate(prompt)
+        final_text = remove_ack_sentences(raw_text)
 
     sr, wav = tts(final_text)
 
