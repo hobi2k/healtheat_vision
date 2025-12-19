@@ -1,0 +1,3 @@
+[submodule "tts/vits"]
+	path = tts/vits
+	url = https://github.com/hobi2k/vits.git
