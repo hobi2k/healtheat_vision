@@ -70,30 +70,17 @@ feat: YOLOv8 데이터 로더 구현
 fix: OCR 전처리 크롭 좌표 오류 수정
 docs: 데이터셋 구성 설명 추가
 
-## 개인 폴더 구조 (youuuchul)
+## 개인 폴더 구조 (초안)
 
 personal_repository
 
 ```
-healtheat_vision/
-├── artifacts/               # 모델 가중치 및 학습 결과 시각화 (Confusion Matrix 등)
-├── configs/                 # YOLO 학습을 위한 YAML 설정 파일
-├── data/                    # 데이터셋 (Git 제외 권장)
-│   ├── aihub_downloads/     # AI Hub에서 다운로드한 원본 데이터
-│   ├── train_images/        # 전처리 완료된 학습 이미지
-│   ├── train_annotations/   # 전처리/수정된 JSON 어노테이션
-│   ├── yolo/                # YOLO 포맷으로 변환된 최종 데이터 (images/labels)
-│   └── test_images/         # 평가용 테스트 이미지
-├── docs/                    # 데이터 분석(EDA) 및 매칭 리스트 (Jupyter Notebooks)
-├── scripts/                 # 환경 설정 및 데이터 다운로드 셸 스크립트
-├── src/                     # 핵심 소스 코드
-│   ├── preprocessing/       # 데이터 정제 및 수집 (collect_images.py 등)
-│   ├── dataset/             # 포맷 변환 및 데이터셋 분할 (train/val split)
-│   ├── train/               # YOLO 모델 학습 및 재개(resume)
-│   ├── pred/                # 추론 및 제출 파일(CSV) 생성
-│   └── utils/               # 공통 유틸리티 (로깅, 장치 설정, 경로 관리)
-├── requirements.txt         # 설치 필요한 라이브러리 목록
-└── README.md                # 프로젝트 가이드
+├─ data          # 데이터셋
+├─ src           # 소스코드
+│  ├─ detection     # Object Detection 모델
+│  ├─ utils         # 헬퍼 함수
+├─ docs          # 프로젝트 문서 및 보고 자료
+├─ README.md
 ```
 
 ## 모델 평가 기준
