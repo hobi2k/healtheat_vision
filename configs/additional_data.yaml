@@ -1,6 +1,6 @@
-path: .
-train: data/additional_splits/train.txt
-val: data/additional_splits/val.txt
+path: data/additional_yolo
+train: images/train
+val: images/val
 nc: 118
 names:
 - 마그밀정(수산화마그네슘)

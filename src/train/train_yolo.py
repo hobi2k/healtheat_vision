@@ -8,6 +8,7 @@ YOLO 모델 학습 메인 스크립트
 예시:
     python -m src.train.train_yolo --cfg hparams_v11.yaml
     python -m src.train.train_yolo --cfg hparams_v8.yaml
+    python -m src.train.train_yolo --cfg hparams_additional.yaml
 """
 
 import yaml

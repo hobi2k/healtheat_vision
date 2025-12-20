@@ -1,10 +1,25 @@
 # configs/hparams_additional.yaml
-model: "artifacts/runs/yolo11n_main_v2/weights/best.pt" # 기존 학습한 best 가중치 경로
-data_yaml: "additional_data.yaml"          # 이번에 새로 만든 추가 데이터용 YAML
-name: "finetune_error_classes_main_v2"
-epochs: 30                                 # 추가 학습은 짧고 굵게
+model: "artifacts/runs/yolo11n_main_v2/weights/best.pt"
+data_yaml: "additional_data.yaml"
+name: "finetune_error_classes_main_v2_50e_"
+epochs: 50
 imgsz: 640
-batch: 16
-lr0: 0.001                                 # 파인튜닝이므로 기본값(0.01)보다 낮게 설정
-optimizer: "AdamW"                         # 미세 조정 시 안정적인 옵티마이저
-patience: 10
+batch: 16          # 32에서 16으로 하향 조정 (OOM 방지)
+lr0: 0.001      # 파인튜닝이므로 0.001보다 더 낮게 시작 (급격한 변화 방지)
+lrf: 0.1            # 최종 lr이 너무 낮아지지 않게 조정
+optimizer: "AdamW"
+weight_decay: 0.0005
+patience: 15       # 15에폭 동안 개선 없으면 조기 종료 (시간 절약)
+
+# 증강(Augmentation) 설정 - 이미 증강된 데이터이므로 YOLO 자체 증강은 약하게
+mixup: 0.0          # 데이터가 충분하다면 끄는 것이 선명도에 유리
+scale: 0.5         # 크기 변화 (멀리서 찍은 경우 대비)
+fliplr: 0.0    # 좌우 반전 끔 (0.5 -> 0.0)
+flipud: 0.0    # 상하 반전 끔 (명시적으로 0.0)
+mixup: 0.0         # 과감히 제거 (선명한 각인 학습 위주, 밝기조절은 이미지 증강에서 조정)
+degrees: 90.0  # 회전 추가, 이건 사용성 고려 많을 수록 좋다고 판단 (15도 범위 내에서 랜덤 회전)
+
+# 잘리는 알약 대비 추가
+mosaic: 0.5       # 여러 알약 등장 대비 (유지)
+close_mosaic: 8   # 마지막에 정밀하게 다듬기 (추가)
+rect: true        # 평가(val) 시 이미지 왜곡 및 잘림 방지 (추가 추천)
