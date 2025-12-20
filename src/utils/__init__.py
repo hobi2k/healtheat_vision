@@ -7,6 +7,8 @@ from .paths import (
     CONFIGS_DIR, 
     RUNS_DIR,
     MODELS_DIR,
-    ensure_dirs
+    ensure_dirs,
+    ARTIFACTS_DIR,
+    CLASS_MAP_PATH
 )
 from .viz import set_korean_font
