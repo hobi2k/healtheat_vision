@@ -51,16 +51,28 @@ class VITSTTS:
         self.speaker_id = speaker_id
 
         # HF 체크포인트 다운로드
-        repo_id = "ORI-Muchim/VITS_multi_speaker_fine_tuning"
-        subdir = "ko_fine_tuning_22050hz"
+        # repo_id = "ORI-Muchim/VITS_multi_speaker_fine_tuning"
+        # subdir = "ko_fine_tuning_22050hz"
 
+        # self.config_path = hf_hub_download(
+        #     repo_id=repo_id,
+        #     filename=f"{subdir}/config.json",
+        # )
+        # self.ckpt_path = hf_hub_download(
+        #     repo_id=repo_id,
+        #     filename=f"{subdir}/G_172000.pth",
+        # )
+        
+        repo_id = "ahnhs2k/vits_paimon_test"
+        
         self.config_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"{subdir}/config.json",
+            filename="config.json"
         )
+        
         self.ckpt_path = hf_hub_download(
             repo_id=repo_id,
-            filename=f"{subdir}/G_172000.pth",
+            filename="G_63000.pth"
         )
 
         # hparams 로드
@@ -134,7 +146,7 @@ class VITSTTS:
                     sid=sid,
                     noise_scale=0.667,
                     noise_scale_w=0.8,
-                    length_scale=1.0,
+                    length_scale=1.3,
                 )[0][0, 0].cpu().float().numpy()
 
             audio_chunks.append(audio)

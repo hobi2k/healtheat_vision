@@ -10,7 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from src.utils import paths
 
 # 1. YOLO 로드 (모델 필요함)
-yolo = YOLO(paths.ARTIFACTS_DIR / "best.pt")
+yolo = YOLO(paths.ARTIFACTS_DIR / "runs/yolo11n_main_v2/weights/best.pt")
 
 # class_map.csv 파일을 읽어옵니다. 
 df_class = pd.read_csv(paths.ARTIFACTS_DIR / "class_map.csv")
@@ -88,7 +88,7 @@ def remove_ack_sentences(text: str) -> str:
 from tts.vits_tts import VITSTTS
 
 tts_engine = VITSTTS(
-    speaker_id=15,
+    speaker_id=0,
     device="cuda" if torch.cuda.is_available() else "cpu",
 )
 
