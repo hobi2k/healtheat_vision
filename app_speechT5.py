@@ -18,7 +18,7 @@ import gradio as gr
 from src.utils import paths
 
 # YOLO 모델 로드 (모델 필요함)
-yolo = YOLO(paths.ARTIFACTS_DIR / "best.pt")
+yolo = YOLO(paths.ARTIFACTS_DIR / "runs/yolo11n_main_v2/weights/best.pt")
 
 # class_map.csv 파일을 읽어옵니다. 
 df_class = pd.read_csv(paths.ARTIFACTS_DIR / "class_map.csv")
