@@ -2,12 +2,12 @@
 
 # 1. 모델 및 경로 설정
 model: artifacts\models\yolo11s_full_train_v1_e150.pt # 기존 150에폭 베스트 모델 로드
-data: yolo_data_filtered_ft.yaml                     # 위에서 만든 데이터 설정 파일
+data_yaml: yolo_data_filtered_ft.yaml                 # 위에서 만든 데이터 설정 파일
 name: 'yolo11s_ft_v1_enhanced'                       # 결과가 저장될 폴더명
 imgsz: 640
 
 # 2. 학습 스케줄 (FT에 맞게 조정)
-epochs: 50             # FT는 30~50 에폭이면 충분합니다.
+epochs: 1             # FT는 30~50 에폭이면 충분합니다.
 batch: 24              # 1070 Ti(8GB) 안전권을 위해 24에서 16으로 하향 제안 (VRAM 부족 방지)
 optimizer: 'AdamW' 
 cache: 'disk'          # RAM 부족 시 유용
