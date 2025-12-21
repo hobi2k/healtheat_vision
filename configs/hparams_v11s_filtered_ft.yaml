@@ -1,0 +1,32 @@
+# YOLO11s Fine-Tuning Settings (FT 전용)
+
+# 1. 모델 및 경로 설정
+model: artifacts\models\yolo11s_full_train_v1_e150.pt # 기존 150에폭 베스트 모델 로드
+data: yolo_data_filtered_ft.yaml                     # 위에서 만든 데이터 설정 파일
+name: 'yolo11s_ft_v1_enhanced'                       # 결과가 저장될 폴더명
+imgsz: 640
+
+# 2. 학습 스케줄 (FT에 맞게 조정)
+epochs: 50             # FT는 30~50 에폭이면 충분합니다.
+batch: 24              # 1070 Ti(8GB) 안전권을 위해 24에서 16으로 하향 제안 (VRAM 부족 방지)
+optimizer: 'AdamW' 
+cache: 'disk'          # RAM 부족 시 유용
+
+# 3. 중요: 학습률(Learning Rate) 설정
+# 기존 0.01에서 10배 낮춰 기존 가중치를 보존하며 미세 조정합니다.
+lr0: 0.001             # ✅ 핵심 수정: 기존 지식 파괴 방지
+lrf: 0.01              # 최종 학습률은 lr0 * lrf
+cos_lr: true 
+warmup_epochs: 3.0     # 적응 기간을 조금 짧게 조정
+
+# 4. 증강(Augmentation) 설정
+# 이미 CLAHE/Sharpening으로 이미지가 변형되었으므로, 너무 강한 증강은 피합니다.
+mosaic: 0.8            # 노이즈 적응을 위해 유지하되 약간 하향
+mixup: 0.0             # ✅ 파인튜닝 시 글자 겹침 방지를 위해 0 유지
+scale: 0.5 
+degrees: 15.0          # ✅ 10.0에서 15.0으로 상향 (기존 e150 설정 준수, 다양한 각도 대응)
+
+# 🚫 글자 왜곡 방지를 위한 반전 완전 차단
+fliplr: 0.0            # 좌우 반전 OFF
+flipud: 0.0            # 상하 반전 OFF
+flip_idx: []           # 특정 축 반전 방지 리스트 비우기

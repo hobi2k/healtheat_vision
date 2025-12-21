@@ -1,6 +1,9 @@
 """
 YOLO 모델 학습 메인 스크립트
 
+주요 기능:
+지정된 YAML 설정 파일을 로드하여 YOLO 모델 학습 수행
+
 실행 방법:
     터미널에서 프로젝트 루트(healtheat_vision) 폴더로 이동 후 아래 명령어 실행
     python -m src.train.train_yolo --cfg [설정파일명.yaml]
@@ -9,6 +12,9 @@ YOLO 모델 학습 메인 스크립트
     python -m src.train.train_yolo --cfg hparams_v11.yaml
     python -m src.train.train_yolo --cfg hparams_v8.yaml
     python -m src.train.train_yolo --cfg hparams_additional.yaml
+    python -m src.train.train_yolo --cfg hparams_v11_finetune.yaml
+    python -m src.train.train_yolo --cfg hparams_v11s.yaml
+    python -m src.train.train_yolo --cfg hparams_v11s_filtered_ft.yaml
 """
 
 import yaml
@@ -79,12 +85,21 @@ def main():
         batch=hp.get('batch', 16),
         optimizer=hp.get('optimizer', 'auto'),
         project=str(RUNS_DIR),
+        lr0=hp.get('lr0', 0.01),
+        lrf=hp.get('lrf', 0.01),          # ✅ 추가 권장: 최종 학습률 감쇄 비율
+        fliplr=hp.get('fliplr', 0.5),
+        flipud=hp.get('flipud', 0.0),
+        degrees=hp.get('degrees', 0.0),
+        mosaic=hp.get('mosaic', 1.0),
+        mixup=hp.get('mixup', 0.0),        # ✅ 추가 권장: YAML의 mixup: 0.1을 반영하기 위함
+        scale=hp.get('scale', 0.5),        # ✅ 추가 권장: YAML의 scale 반영
         name=name,
         device=device,
         cache="disk",
         seed=42,
         workers=hp.get('workers', 4),
         patience=hp.get('patience', 50),
+        warmup_epochs=hp.get('warmup_epochs', 3.0), # ✅ 추가 권장
         val=True,
         cos_lr=hp.get('cos_lr', True),
         exist_ok=False,

@@ -1,0 +1,21 @@
+# YOLO11s Full Training Settings
+model: artifacts\models\yolo11s.pt 
+data_yaml: yolo_data_finetune.yaml
+name: 'yolo11s_full_train_v1_e150_'  # ✅ n에서 s로 변경됨을 명시
+imgsz: 640
+epochs: 150
+batch: 24             # 1070 Ti에서 s 모델로 batch 16이면 메모리(VRAM)가 꽉 찰 수 있습니다.
+optimizer: 'AdamW' 
+lr0: 0.01 
+lrf: 0.01 
+cos_lr: true 
+warmup_epochs: 5.0 
+cache: 'disk'
+
+# 증강 설정 (동일)
+mosaic: 1.0 
+fliplr: 0.0 
+flipud: 0.0 
+degrees: 15.0 
+mixup: 0.1 
+scale: 0.5

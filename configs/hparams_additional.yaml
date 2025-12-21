@@ -1,6 +1,6 @@
 # configs/hparams_additional.yaml
 model: "artifacts/runs/yolo11n_main_v2/weights/best.pt"
-data_yaml: "additional_data.yaml"
+data_yaml: "yolo_data_additional.yaml"
 name: "finetune_error_classes_main_v2_50e_"
 epochs: 50
 imgsz: 640

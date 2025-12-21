@@ -9,6 +9,8 @@ import pandas as pd
 from ultralytics import YOLO
 from PIL import Image, ImageDraw, ImageFont
 
+import cv2  # 추가
+import numpy as np  # 추가
 # =========================
 # (1) 경로 설정: 여기만 주로 바꾸면 됨
 # =========================
@@ -34,6 +36,37 @@ OUT_DIR = REPO_ROOT / "submissions" / f"{RUN_NAME}_{datetime.now().strftime('%y%
 VIS_DIR = OUT_DIR / "viz"
 SUBMISSION_CSV = OUT_DIR / "submission.csv"
 
+# =========================
+# (1.5) 이미지 전처리 함수 추가
+# =========================
+def apply_preprocessing(img_path: Path):
+    """
+    OpenCV를 사용하여 Sharpening과 CLAHE를 적용합니다.
+    """
+    # 한글 경로 등을 고려해 numpy로 읽기
+    img_array = np.fromfile(str(img_path), np.uint8)
+    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    
+    if img is None:
+        return None
+
+    # 1. CLAHE (밝기 대비 최적화)
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    cl = clahe.apply(l)
+    limg = cv2.merge((cl, a, b))
+    img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+
+    # 2. Sharpening (경계선 강화)
+    kernel = np.array([[-1, -1, -1], 
+                       [-1,  9, -1], 
+                       [-1, -1, -1]])
+    img = cv2.filter2D(img, -1, kernel)
+    
+    # YOLO는 RGB를 기대하므로 BGR -> RGB 변환
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return img_rgb
 
 # =========================
 # (2) 제출 포맷/ID 변환: 여기만 바꾸면 규격 대응 가능
@@ -64,7 +97,6 @@ def load_yolo_to_orig_class_map(class_map_csv: Path) -> dict[int, int]:
     # yolo_id -> orig_id
     return {int(r.yolo_id): int(r.orig_id) for r in df.itertuples(index=False)}
 
-
 # =========================
 # (3) 시각화 유틸
 # =========================
@@ -82,6 +114,7 @@ def draw_boxes(image: Image.Image, boxes, labels, scores) -> Image.Image:
         draw.rectangle([x1, y1, x2, y2], width=3)
         draw.text((x1, max(0, y1 - 18)), f"{lab} {sc:.2f}", font=font)
     return img
+
 
 
 # =========================
@@ -115,17 +148,25 @@ def main():
     ann_id = 1
 
     # ✅ 추론 파라미터(필요 시 수정)
-    CONF_TH = 0.6
-    IOU_TH = 0.7
+    CONF_TH = 0.6  # 0.6에서 낮춤: 하위권 알약을 하나라도 더 잡기 위함
+    IOU_TH = 0.6    # 0.7에서 조금 낮춤: 겹친 알약 분리 최적화
+    AUGMENT = True  # TTA 활성화 (속도는 느려지지만 정확도 상승)
+
 
     for img_path in img_paths:
         image_id = transform_image_id(img_path)
 
-        # ultralytics predict
+        # --- [1번 전략] 전처리 적용 ---
+        processed_img = apply_preprocessing(img_path)
+        if processed_img is None:
+            continue
+
+        # ultralytics predict (이미지 경로 대신 처리된 numpy array 전달)
         results = model.predict(
-            source=str(img_path),
+            source=processed_img,
             conf=CONF_TH,
             iou=IOU_TH,
+            augment=AUGMENT, # TTA 적용
             verbose=False,
         )
         r = results[0]
@@ -175,9 +216,11 @@ def main():
 
         # ✅ 시각화: 박스가 1개라도 있으면 저장
         if vis_boxes:
-            img = Image.open(img_path)
-            vis = draw_boxes(img, vis_boxes, vis_labels, vis_scores)
-            vis.save(VIS_DIR / f"{img_path.stem}_pred.jpg", quality=95)
+            # 기존: img = Image.open(img_path)  <- 원본을 다시 읽음
+            # 수정: 전처리된 이미지를 PIL 객체로 변환하여 사용
+            img_pil = Image.fromarray(processed_img) 
+            vis = draw_boxes(img_pil, vis_boxes, vis_labels, vis_scores)
+            vis.save(VIS_DIR / f"{img_path.stem}_pred_preprocessed.jpg", quality=95)
 
     # 저장
     sub_df = pd.DataFrame(rows, columns=[
