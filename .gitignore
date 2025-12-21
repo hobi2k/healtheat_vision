@@ -18,6 +18,10 @@ wandb/
 
 # === Data (Large Files & Directories) ===
 # 모든 이미지와 라벨 데이터 제외
+*.cache
+data/ft_mix_yolo_filtered/
+data/ft_mix_yolo/
+data/additional_yolo/
 data/train_images/
 data/train_annotations/
 data/test_images/
