@@ -33,6 +33,10 @@
 | 협업 도구             | GitHub, Notion, Discord                             |
 
 
+## 결과 그래프 예시
+
+<img src="artifacts/runs/yolo11n_main_v2/results.png" width="1000">
+
 ## 브랜치 전략
 
 
