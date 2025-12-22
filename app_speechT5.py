@@ -29,7 +29,7 @@ QWEN_ID = "Qwen/Qwen2.5-3B-Instruct"  # 적절한 한국어 실력의 LM 사용
 qwen_tokenizer = AutoTokenizer.from_pretrained(QWEN_ID)
 qwen_model = AutoModelForCausalLM.from_pretrained(
     QWEN_ID,
-    dtype=torch.float16,
+    torch_dtype=torch.float16,
     device_map="auto",
 ).eval()
 
@@ -229,13 +229,11 @@ speaker_embeddings = speaker_embeddings.to(DEVICE)
 def tts(text: str):
     """
     YOLO 결과 텍스트 -> 한국어 음성 생성
-    STST 코드 기반으로 안정성 강화한 버전.
     """
     if text is None or text.strip() == "":
         return (SR, np.zeros(int(SR * 0.5), dtype=np.float32))  # 0.5초 무음
 
     norm = normalize_korean(text)
-
     segs_raw = prosody_split(norm)
 
     # 빈 세그먼트 제거
@@ -246,13 +244,9 @@ def tts(text: str):
     audio_chunks = []
 
     for seg in segments:
-        print(f"[TTS] Process segment: {seg}")
-
-        # placeholder-aware jamo decomposition
         jamo_seq = decompose_jamo_with_placeholders(seg)
 
         if len(jamo_seq) == 0:
-            print("[TTS] Empty jamo_seq. Skip this segment.")
             continue
 
         enc = tokenizer(
@@ -331,4 +325,4 @@ demo = gr.Interface(
     title="YOLO + Qwen + SpeechT5 알약 위치 음성 안내 데모",
 )
 
-demo.launch(server_name="0.0.0.0", server_port=7860)
+demo.launch(server_name="127.0.0.1", server_port=7860)
