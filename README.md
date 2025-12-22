@@ -76,54 +76,25 @@ personal_repository
 
 ```
 healtheat_vision/
-├── artifacts/               # 모델 가중치 및 학습 결과 시각화 (Confusion Matrix 등)
-├── configs/                 # YOLO 학습을 위한 YAML 설정 파일
-├── data/                    # 데이터셋 (Git 제외 권장)
-│   ├── aihub_downloads/     # AI Hub에서 다운로드한 원본 데이터
-│   ├── train_images/        # 전처리 완료된 학습 이미지
-│   ├── train_annotations/   # 전처리/수정된 JSON 어노테이션
-│   ├── yolo/                # YOLO 포맷으로 변환된 최종 데이터 (images/labels)
-│   └── test_images/         # 평가용 테스트 이미지
-├── docs/                    # 데이터 분석(EDA) 및 매칭 리스트 (Jupyter Notebooks)
-├── scripts/                 # 환경 설정 및 데이터 다운로드 셸 스크립트
-├── src/                     # 핵심 소스 코드
-│   ├── preprocessing/       # 데이터 정제 및 수집 (collect_images.py 등)
-│   ├── dataset/             # 포맷 변환 및 데이터셋 분할 (train/val split)
-│   ├── train/               # YOLO 모델 학습 및 재개(resume)
-│   ├── pred/                # 추론 및 제출 파일(CSV) 생성
-│   └── utils/               # 공통 유틸리티 (로깅, 장치 설정, 경로 관리)
-├── requirements.txt         # 설치 필요한 라이브러리 목록
-└── README.md                # 프로젝트 가이드
-```
+├── artifacts/          # 프로젝트 결과물 (학습된 모델 가중치, 실험 리포트, 학습 로그 등)
+├── configs/            # YOLO 모델 학습 및 데이터셋 구성을 위한 YAML 설정 파일 모음
+├── data/               # 데이터셋 관리 (원본 데이터, 전처리 데이터, YOLO 포맷 데이터셋)
+├── docs/               # 데이터 분석(EDA) 과정, 매칭 리스트 및 기술 문서 (IPYNB, CSV, XLSX)
+├── scripts/            # 환경 구축 및 외부 데이터(AIHub 등) 다운로드를 위한 셸 스크립트
+├── src/                # 메인 소스 코드 모듈
+│   ├── preprocessing/  # 원천 데이터 정제 (JSON 수정, 이미지 수집 및 무결성 검사)
+│   ├── dataset/        # 학습용 데이터셋 빌드 (포맷 변환, 데이터 분할, 클래스 맵핑)
+│   ├── train/          # YOLO 모델 학습 실행 및 중단된 학습 재개(Resume) 로직
+│   ├── validation/     # 학습된 모델의 성능 평가 및 메트릭 분석
+│   ├── pred/           # 테스트 데이터 추론 및 최종 제출 파일(CSV) 생성
+│   ├── visualization/  # 학습 데이터 시각화 및 증강(Augmentation) 결과 확인 유틸리티
+│   └── utils/          # 프로젝트 전반에서 사용되는 공통 모듈 (경로 관리, 로깅, 장치 설정)
+├── submissions/        # 추론 결과로 생성된 최종 제출용 파일 모음
+├── validation/         # 모델별 검증 결과값 및 앙상블 분석 데이터 저장 폴더
+├── requirements.txt    # 프로젝트 실행을 위한 라이브러리 의존성 목록
+└── README.md           # 프로젝트 가이드 및 설명서
 
-## src 내부
-├── dataset ✅
-│   ├── build_class_map.py : 원본 JSON들을 훑어서 클래스 리스트(class_map.csv) 생성.
-│   ├── convert_cocojson_to_yolo.py : COCO JSON 포맷을 YOLO 포맷으로 변환.
-│   ├── split_check_class.py : YOLO 데이터셋의 클래스 분포를 확인하고 누락된 클래스를 찾음.
-│   ├── split_dataset.py : 학습/평가 데이터셋으로 분할.
-│   ├── update_yolo_data_yaml.py : YOLO 학습용 설정 파일(yolo_data.yaml)을 생성 또는 업데이트.
-│   └── collect_and_split_additional_data.py : 에러 데이터셋을 수집하고 학습/평가 데이터셋으로 분할.
-│
-├── pred
-│   └── predict_and_submit.py
-├── preprocessing
-│   ├── collect_images.py
-│   ├── edit_json.py
-│   └── label_check_class.py
-├── train
-│   ├── resume_yolo.py
-│   ├── train_yolo_legacy.py
-│   └── train_yolo.py
-├── utils
-│   ├── device.py
-│   ├── logger.py
-│   ├── paths.py
-│   └── viz.py
-└── visualization
-    ├── check_aug_data.py
-    ├── check_yolo_plottly.py
-    └── check_yolo.py
+```
 
 ## 모델 평가 기준
 
