@@ -143,7 +143,7 @@ def run_augmentation(
 
 
 def save_result(
-    aug_image: Image.Image,
+    aug_image,
     yolo_text: str,
 ):
     """
@@ -151,6 +151,10 @@ def save_result(
     """
     if aug_image is None:
         raise ValueError("저장할 이미지가 없습니다.")
+
+    # ndarray -> PIL
+    if isinstance(aug_image, np.ndarray):
+        aug_image = Image.fromarray(aug_image)
 
     ts = int(time.time() * 1000)
 
@@ -166,7 +170,6 @@ def save_result(
         f.write(yolo_text.strip() + "\n")
 
     return f"Saved:\n{img_path}\n{label_path}"
-
 
 # Gradio UI
 with gr.Blocks() as demo:
