@@ -118,14 +118,14 @@ healtheat_vision/
 
 - 윈도우 유저 사용법
     - Download ZIP로 전체 개발 파일 다운로드 후 `app_augmentaition.bat`을 더블클릭하여 이미지 증강 앱 실행 가능
-    - Download ZIP로 전체 개발 파일 다운로드 후 `app_speechT5.bat`을 더블클릭하여 이미지 증각 앱 실행 가능
+    - Download ZIP로 전체 개발 파일 다운로드 후 `app_speechT5.bat`을 더블클릭하여 객체 탐지 앱 실행 가능
 
 - 파이썬에 익숙한 유저 사용법
     - git clone으로 리포지토리 복사
     - `uv venv --python 3.11` 명령어로 파이썬 가상환경 생성
     - `uv pip install -r requirements.txt` 명령어로 필요 라이브러리 설치
     - `uv run app_augmentation.py` 명령어로 이미지 증강 앱 실행 가능
-    - `uv run app_speechT5.py` 명령어로 이미지 증강 앱 실행 가능
+    - `uv run app_speechT5.py` 명령어로 객체 탐지 앱 실행 가능
 
 ## 커뮤니케이션 규칙
 
