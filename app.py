@@ -6,6 +6,7 @@ from collections import Counter
 import gradio as gr
 from ultralytics import YOLO
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from tts.vits_tts import VITSTTS
 
 from src.utils import paths
 
@@ -85,8 +86,6 @@ def remove_ack_sentences(text: str) -> str:
 
 
 # 3. VITS TTS 로드
-from tts.vits_tts import VITSTTS
-
 tts_engine = VITSTTS(
     speaker_id=0,
     device="cuda" if torch.cuda.is_available() else "cpu",
