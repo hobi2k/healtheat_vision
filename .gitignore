@@ -1,3 +1,27 @@
+# === Python & System ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.vscode/
+.idea/
+
+# === Project Artifacts & Training Outputs ===
+# 가중치와 대용량 로그는 절대 올리지 않음
+artifacts/**/*
+!artifacts/**/.gitkeep
+runs/
+wandb/
+*.pt
+*.pth
+
+# === Data (Large Files & Directories) ===
+# 모든 이미지와 라벨 데이터 제외
+*.cache
+data/ft_mix_yolo_filtered/
+data/ft_mix_yolo/
+data/additional_yolo/
 # === Project Artifacts ===
 # artifacts 폴더 전체를 일단 무시
 artifacts/**/*
@@ -61,6 +85,41 @@ data/train_images/
 data/train_annotations/
 data/test_images/
 data/yolo/
+data/additional_train_images/
+data/additional_train_annotations/
+data/eda_files/
+data/train_images_temp/
+data/train_annotations_temp/
+data/aihub_downloads/
+data/kaggle_downloads/
+data/match_for_ft_mix/
+validation/yolo_val_ready
+
+# === Data (Specific Large Files) ===
+*.zip
+*.tar
+*.tar.gz
+docs/*.csv
+docs/*.xlsx
+docs/공공데이터 정보/
+전달파일/
+
+# === Data (Exceptions - MUST BE TRACKED) ===
+# 이 부분은 data/ 폴더 전체 무시 설정보다 아래에 있어야 합니다.
+# 데스크탑에서 바로 학습을 돌리기 위해 '리스트' 파일은 공유합니다.
+!data/additional_splits/
+!data/additional_splits/*.txt
+!data/splits/
+!data/splits/*.txt
+
+# === Configs (Must be Tracked) ===
+# 모든 설정 YAML은 추적합니다.
+!configs/*.yaml
+
+# === Temp & Submissions ===
+temp/
+tmp/
+submissions/
 data/splits/
 data/eda_files/
 data/*.zip

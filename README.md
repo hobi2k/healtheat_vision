@@ -70,11 +70,30 @@ feat: YOLOv8 데이터 로더 구현
 fix: OCR 전처리 크롭 좌표 오류 수정
 docs: 데이터셋 구성 설명 추가
 
+## 개인 폴더 구조 (youuuchul)
 ## 폴더 구조
 
 
 ```
 healtheat_vision/
+├── artifacts/          # 프로젝트 결과물 (학습된 모델 가중치, 실험 리포트, 학습 로그 등)
+├── configs/            # YOLO 모델 학습 및 데이터셋 구성을 위한 YAML 설정 파일 모음
+├── data/               # 데이터셋 관리 (원본 데이터, 전처리 데이터, YOLO 포맷 데이터셋)
+├── docs/               # 데이터 분석(EDA) 과정, 매칭 리스트 및 기술 문서 (IPYNB, CSV, XLSX)
+├── scripts/            # 환경 구축 및 외부 데이터(AIHub 등) 다운로드를 위한 셸 스크립트
+├── src/                # 메인 소스 코드 모듈
+│   ├── preprocessing/  # 원천 데이터 정제 (JSON 수정, 이미지 수집 및 무결성 검사)
+│   ├── dataset/        # 학습용 데이터셋 빌드 (포맷 변환, 데이터 분할, 클래스 맵핑)
+│   ├── train/          # YOLO 모델 학습 실행 및 중단된 학습 재개(Resume) 로직
+│   ├── validation/     # 학습된 모델의 성능 평가 및 메트릭 분석
+│   ├── pred/           # 테스트 데이터 추론 및 최종 제출 파일(CSV) 생성
+│   ├── visualization/  # 학습 데이터 시각화 및 증강(Augmentation) 결과 확인 유틸리티
+│   └── utils/          # 프로젝트 전반에서 사용되는 공통 모듈 (경로 관리, 로깅, 장치 설정)
+├── submissions/        # 추론 결과로 생성된 최종 제출용 파일 모음
+├── validation/         # 모델별 검증 결과값 및 앙상블 분석 데이터 저장 폴더
+├── requirements.txt    # 프로젝트 실행을 위한 라이브러리 의존성 목록
+└── README.md           # 프로젝트 가이드 및 설명서
+
 ├── artifacts/               # 모델 가중치 및 학습 결과 시각화 (Confusion Matrix 등)
 ├── configs/                 # YOLO 학습을 위한 YAML 설정 파일
 ├── data/                    # 데이터셋 (Git 제외 권장)
@@ -97,7 +116,6 @@ healtheat_vision/
 ```
 
 ## 모델 평가 기준
-
 
 | 항목        | 지표                              |
 | --------- | ------------------------------- |

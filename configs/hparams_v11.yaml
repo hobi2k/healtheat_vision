@@ -1,12 +1,24 @@
-# YOLO11n Baseline Settings (yolo11n_main_v2 기준)
-model: yolo11n.pt
+# YOLO11n Fine-tuning Settings (yolo11n_main_v2 기준, 믹스 데이터)
+model: artifacts\runs\yolo11n_main_v2\weights\best.pt
+data_yaml: yolo_data_finetune.yaml
+name: "finetune_mix_classes_main_v2_50e_"
 imgsz: 640
-epochs: 100
+epochs: 50
 batch: 16
-workers: 4
-seed: 42
-optimizer: 'auto'     # 자동 설정 (기본값)
-cos_lr: false         # 기존 학습 시 false였음
-cache: 'disk'
-mosaic: 1.0           # 기본 증강 사용
-name: 'yolo11n_baseline' # 결과 폴더 구분용 이름
+optimizer: 'AdamW'
+lr0: 0.0005
+cos_lr: true
+warmup_epochs: 3.0
+
+# 🚫 글자 왜곡 방지를 위해 플립 OFF 또는 아주 낮게 설정
+fliplr: 0.0   # 좌우 반전 끄기 (글자가 뒤집히면 안 됨)
+flip_idx: []  # 특정 축 반전 방지
+flipud: 0.0   # 상하 반전 끄기
+
+# 🔄 대신 회전(degrees)은 어느 정도 유지
+# 알약이 놓인 각도는 다양할 수 있으므로, 글자가 약간 기운 것은 모델이 배워야 합니다.
+degrees: 15.0 # 너무 크게 돌리면 글자를 읽기 힘드니 15~30도 내외 권장
+
+# 🎨 구도 증강은 유지 (박싱 능력 보존용)
+mosaic: 1.0
+mixup: 0.0    # 글자가 겹치면 노이즈가 될 수 있으므로 파인튜닝 시엔 0 권장

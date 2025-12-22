@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 TEST_IMG_DIR = REPO_ROOT / "data" / "test_images"
 
 # ✅ 학습 run 폴더명 (artifacts/runs 아래)
-RUN_NAME = "yolo11n_main_v2"
+RUN_NAME = "yolo11s_full_train_v1_e150_"
 RUN_DIR = REPO_ROOT / "artifacts" / "runs" / RUN_NAME
 
 # ✅ 보통 제출은 best.pt 권장 (last.pt는 마지막 상태라 불안정할 수 있음)
@@ -115,7 +115,7 @@ def main():
     ann_id = 1
 
     # ✅ 추론 파라미터(필요 시 수정)
-    CONF_TH = 0.25
+    CONF_TH = 0.6
     IOU_TH = 0.7
 
     for img_path in img_paths:

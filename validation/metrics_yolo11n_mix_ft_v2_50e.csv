@@ -1,0 +1,2 @@
+ModelName,Precision,Recall,F1-Score,mAP50,Total_GT,TP,FP,FN
+yolo11n_mix_ft_v2_50e,0.8846,0.8737,0.8791,0.7728,5984,5228,682,756

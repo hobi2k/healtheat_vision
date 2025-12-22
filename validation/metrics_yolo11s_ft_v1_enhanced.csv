@@ -1,0 +1,2 @@
+ModelName,Precision,Recall,F1-Score,mAP50,Total_GT,TP,FP,FN
+yolo11s_ft_v1_enhanced,0.8697,0.8735,0.8716,0.7597,5984,5227,783,757
