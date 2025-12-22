@@ -5,6 +5,8 @@ AI 기반 헬스케어 프로젝트 > 사용자가 촬영한 알약 사진을 �
 # 프로젝트 보고서 파일_pdf
 - 22일 19시 제출 파일
 - https://drive.google.com/file/d/1XkAUXP2GZG25Y6WCv-I_MN0PPczZBNDb/view?usp=share_link
+- 최종 발표 파일
+- https://drive.google.com/file/d/1JppRztq9jjT1m93M_YclGCVescNm_Dfc/view?usp=share_link
 
 
 ## 프로젝트 개요 및 EDA
