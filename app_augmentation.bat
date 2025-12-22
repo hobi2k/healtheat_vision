@@ -1,29 +1,30 @@
 @echo off
+setlocal EnableDelayedExpansion
 chcp 65001
 title Augmentation App Bootstrap (Python 3.11)
 
 cd /d "%~dp0"
 
-echo === STEP 1: Check Python 3.11 ===
+echo === STEP 1: Check / Install Python 3.11 ===
+
 where py >nul 2>&1
 if errorlevel 1 (
     echo Python not found. Installing Python 3.11...
 
     set PYTHON_INSTALLER=python-3.11.9-amd64.exe
-    if not exist %PYTHON_INSTALLER% (
-        powershell -Command ^
-          "Invoke-WebRequest https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe -OutFile %PYTHON_INSTALLER%"
+
+    if not exist "!PYTHON_INSTALLER!" (
+        powershell -Command "Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe -OutFile !PYTHON_INSTALLER!"
+        if errorlevel 1 (
+            echo Failed to download Python installer.
+            pause
+            exit /b
+        )
     )
 
-    %PYTHON_INSTALLER% ^
-        /quiet ^
-        InstallAllUsers=0 ^
-        PrependPath=1 ^
-        Include_launcher=1 ^
-        Include_pip=1
+    "!PYTHON_INSTALLER!" /quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1 Include_pip=1
 )
 
-REM 설치 후 재확인
 py -3.11 --version >nul 2>&1
 if errorlevel 1 (
     echo Python installation failed.
