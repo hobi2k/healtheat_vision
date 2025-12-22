@@ -9,7 +9,8 @@
 
 ## 시연 영상 모음
 
-- [VITS TTS 적용 객체 탐지 앱 시연 영상](https://drive.google.com/file/d/1ZmWTazO8r-AhPVrtuM4rIPqxrRPnqClb/view?usp=sharing)
+- [YOLO + Qwen + SpeechT5 TTS 적용 객체 탐지 앱 시연 영상](https://drive.google.com/file/d/1nNx2LavNJ7TT9Ar1Qc2MVWKvdJSoZ0qM/view?usp=sharing)
+- [YOLO + Qwen + VITS TTS 적용 객체 탐지 앱 시연 영상](https://drive.google.com/file/d/1ZmWTazO8r-AhPVrtuM4rIPqxrRPnqClb/view?usp=sharing)
 - [Stable Diffusion + SAM 이미지 증강 앱 시연 영상](https://drive.google.com/file/d/1dJE3ClaXjYRL5pZGG99KwnFMwH07jgWS/view?usp=sharing)
 
 ## 프로젝트 목표
