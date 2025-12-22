@@ -1,4 +1,9 @@
 # src/pred/predict_and_submit.py
+"""
+Yolo v11s의 Sharpen 등의 전처리를 적용한 이미지의 FT 버전 모델의 예측/제출 코드입니다.
+해당 단일 모델의 평가 참고 후 이후 앙상블 전략마련에 목적이 있습니다.
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -21,7 +26,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 TEST_IMG_DIR = REPO_ROOT / "data" / "test_images"
 
 # ✅ 학습 run 폴더명 (artifacts/runs 아래)
-RUN_NAME = "yolo11s_full_train_v1_e150_"
+RUN_NAME = "yolo11s_ft_v1_enhanced"
 RUN_DIR = REPO_ROOT / "artifacts" / "runs" / RUN_NAME
 
 # ✅ 보통 제출은 best.pt 권장 (last.pt는 마지막 상태라 불안정할 수 있음)
