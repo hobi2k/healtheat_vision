@@ -33,6 +33,8 @@ data/train_images_temp/
 data/train_annotations_temp/
 data/aihub_downloads/
 data/kaggle_downloads/
+data/match_for_ft_mix/
+validation/yolo_val_ready
 
 # === Data (Specific Large Files) ===
 *.zip
