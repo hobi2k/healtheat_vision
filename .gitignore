@@ -22,6 +22,65 @@ wandb/
 data/ft_mix_yolo_filtered/
 data/ft_mix_yolo/
 data/additional_yolo/
+# === Project Artifacts ===
+# artifacts 폴더 전체를 일단 무시
+artifacts/**/*
+
+# 하지만 .gitkeep 파일은 추적하여 폴더 구조를 유지
+!artifacts/**/.gitkeep
+
+# === Training Outputs & Weights ===
+# 모든 가중치 파일 제외 (어느 폴더에 있든)
+*.pt
+*.pth
+# YOLO가 기본으로 생성할 수도 있는 runs 폴더 제외
+runs/
+wandb/
+
+# docs
+docs/*.csv
+docs/*.xlsx
+전달파일/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# System
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editor
+.idea/
+.vscode/
+
+# Data (Large files)
 data/train_images/
 data/train_annotations/
 data/test_images/
@@ -61,3 +120,36 @@ docs/공공데이터 정보/
 temp/
 tmp/
 submissions/
+data/splits/
+data/eda_files/
+data/*.zip
+data/*.tar
+data/train_images_temp/
+data/train_annotations_temp/
+data/
+*.zip
+*.tar
+*.tar.gz
+
+# datasets / outputs
+data/
+submissions/
+
+# Training Outputs
+runs/
+wandb/
+*.pt
+*.pth
+
+# Submission
+submissions/*.csv
+submissions/*.xlsx
+submissions/
+**/submissions/
+
+# Temp
+temp/
+tmp/
+
+# etc
+.antigravityrules

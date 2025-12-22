@@ -12,5 +12,6 @@ from .paths import (
     RAW_IMAGES_DIR,
     COLLECTED_IMAGES_DIR,
     CLASS_MAP_PATH
+    ensure_dirs
 )
 from .viz import set_korean_font
