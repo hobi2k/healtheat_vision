@@ -9,6 +9,8 @@ from .paths import (
     MODELS_DIR,
     ensure_dirs,
     ARTIFACTS_DIR,
+    RAW_IMAGES_DIR,
+    COLLECTED_IMAGES_DIR,
     CLASS_MAP_PATH
 )
 from .viz import set_korean_font
