@@ -7,6 +7,11 @@
 사용자가 찍은 알약 사진을 분석하여 약 이름을 자동으로 인식하고,
 약물 정보 및 주의사항을 제공하는 서비스를 개발합니다.
 
+## 시연 영상 모음
+
+- [VITS TTS 적용 객체 탐지 앱 시연 영상](https://drive.google.com/file/d/1ZmWTazO8r-AhPVrtuM4rIPqxrRPnqClb/view?usp=sharing)
+- [Stable Diffusion + SAM 이미지 증강 앱 시연 영상](https://drive.google.com/file/d/1dJE3ClaXjYRL5pZGG99KwnFMwH07jgWS/view?usp=sharing)
+
 ## 프로젝트 목표
 
 
@@ -114,7 +119,7 @@ healtheat_vision/
 여기로 -> [README.md](/diffusion/README.md)
 
 
-# 데모 앱
+## 데모 앱
 
 - 윈도우 유저 사용법
     - Download ZIP로 전체 개발 파일 다운로드 후 `app_augmentaition.bat`을 더블클릭하여 이미지 증강 앱 실행 가능
