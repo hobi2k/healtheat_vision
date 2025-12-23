@@ -3,13 +3,10 @@
 AI 기반 헬스케어 프로젝트 > 사용자가 촬영한 알약 사진을 분석하여 정확한 의약품 명칭을 인식하고, 시각장애인을 위한 맞춤형 복약 정보 및 위치 가이드를 음성으로 제공합니다.
 
 # 프로젝트 보고서 파일_pdf
-- 22일 19시 제출 파일
-- https://drive.google.com/file/d/1XkAUXP2GZG25Y6WCv-I_MN0PPczZBNDb/view?usp=share_link
-- 최종 발표 파일
-- https://drive.google.com/file/d/1JppRztq9jjT1m93M_YclGCVescNm_Dfc/view?usp=share_link
-
+- https://drive.google.com/file/d/1KwtlYlgUqv48gJAMTL6IsOrxjRN__aDD/view?usp=drive_link
+  
 # 개인 로그
-
+- [신유철]
 - [안호성](https://hobi2k.github.io/category/Healtheat_Vision/)
 
 ## 프로젝트 개요 및 EDA
