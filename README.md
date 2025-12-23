@@ -8,6 +8,9 @@ AI 기반 헬스케어 프로젝트 > 사용자가 촬영한 알약 사진을 �
 - 최종 발표 파일
 - https://drive.google.com/file/d/1JppRztq9jjT1m93M_YclGCVescNm_Dfc/view?usp=share_link
 
+# 개인 로그
+
+- [안호성](https://hobi2k.github.io/category/Healtheat_Vision/)
 
 ## 프로젝트 개요 및 EDA
 
