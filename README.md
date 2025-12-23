@@ -6,7 +6,7 @@ AI 기반 헬스케어 프로젝트 > 사용자가 촬영한 알약 사진을 �
 - https://drive.google.com/file/d/1KwtlYlgUqv48gJAMTL6IsOrxjRN__aDD/view?usp=drive_link
   
 # 개인 로그
-- [신유철]
+- [신유철](https://www.notion.so/2d29b7c8a21f805aa41bf3338f9a6745?source=copy_link)
 - [안호성](https://hobi2k.github.io/category/Healtheat_Vision/)
 
 ## 프로젝트 개요 및 EDA
